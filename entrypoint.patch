@@ -1,0 +1,4 @@
+290c290
+< exec "$@"
+---
+> exec supervisord -c /etc/supervisor.conf

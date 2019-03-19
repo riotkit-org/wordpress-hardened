@@ -4,6 +4,7 @@ ADD ./supervisor.conf /etc/supervisor.conf
 ADD ./nginx.conf /etc/nginx/nginx.conf
 ADD ./entrypoint.patch /usr/local/bin/
 ADD ./update-wordpress.sh /usr/local/bin/
+ADD ./wp-config-sample.php /usr/src/wordpress/wp-config-sample.php
 
 RUN apk --update add nginx supervisor patch \
     && curl "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar" --output /usr/bin/wp \

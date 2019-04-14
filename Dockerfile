@@ -10,4 +10,6 @@ RUN apk --update add nginx supervisor patch \
     && curl "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar" --output /usr/bin/wp \
     && chmod +x /usr/bin/wp /usr/local/bin/update-wordpress.sh \
     && cd /usr/local/bin && patch /usr/local/bin/docker-entrypoint.sh /usr/local/bin/entrypoint.patch -f \
-    && echo "0 5 * * SAT /usr/local/bin/update-wordpress.sh" > /etc/crontabs/root
+    && echo "0 5 * * SAT /usr/local/bin/update-wordpress.sh" > /etc/crontabs/root \
+    && mkdir -p /var/tmp/nginx/ \
+    && chown www-data:www-data /var/tmp/nginx/ -R

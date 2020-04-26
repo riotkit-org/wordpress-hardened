@@ -1,5 +1,11 @@
 #!/bin/bash
 
+set -e
+
+setup_php_ini() {
+    j2 /templates/usr/local/etc/php/php.ini.j2 > /usr/local/etc/php/php.ini
+}
+
 setup_crontab() {
     echo "${AUTO_UPDATE_CRON} /bin/bash /usr/local/bin/update-wordpress.sh" > /etc/crontabs/root
 }
@@ -18,6 +24,7 @@ install_wordpress() {
     mv /usr/local/sbin/php-fpm.bckp /usr/local/sbin/php-fpm
 }
 
+setup_php_ini
 setup_crontab
 install_wordpress
 exec supervisord -c /etc/supervisor.conf

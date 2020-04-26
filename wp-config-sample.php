@@ -28,25 +28,35 @@ function str_ends_with($haystack, $needle) {
     return (substr($haystack, -$length) === $needle);
 }
 
+// support for multiple values in eg. VIRTUAL_HOST, picks first one
+function get_virtual_host($hosts) {
+    $vhost = explode(',');
+    return $vhosts[0];
+}
+
 function get_preffered_protocol ($url) {
     return str_ends_with($url, '.localhost') ? 'http://' : 'https://';
 }
 
-function wp_find_page_url () {
-    if (isset($_SERVER['VIRTUAL_HOST'])) {
-        return get_preffered_protocol($_SERVER['VIRTUAL_HOST']) . $_SERVER['VIRTUAL_HOST'];
+function wp_find_page_url() {
+    if (isset($_SERVER['WP_PAGE_URL'])) {
+        $vhost = get_virtual_host($_SERVER['WP_PAGE_URL']);
+
+        return get_preffered_protocol($vhost) . $vhost];
     }
 
-    if (isset($_SERVER['WP_PAGE_URL'])) {
-        return get_preffered_protocol($_SERVER['WP_PAGE_URL']) . $_SERVER['WP_PAGE_URL'];
+    if (isset($_SERVER['VIRTUAL_HOST'])) {
+        $vhost = get_virtual_host($_SERVER['VIRTUAL_HOST']);
+
+        return get_preffered_protocol($vhost) . $vhost;
     }
 }
 
 $pageUrl = wp_find_page_url();
 
 if ($pageUrl) {
-    define( 'WP_HOME', $pageUrl );
-    define( 'WP_SITEURL', $pageUrl );
+    define('WP_HOME', $pageUrl);
+    define('WP_SITEURL', $pageUrl);
 }
 
 // ** MySQL settings - You can get this info from your web host ** //

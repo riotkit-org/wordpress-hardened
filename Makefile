@@ -3,23 +3,30 @@ SHELL=/bin/bash
 RIOTKIT_UTILS_VERSION=2.2.0
 CI_UTILS_BIN=./.helpers/ci-utils-${RIOTKIT_UTILS_VERSION}/bin
 
+TAG_PRESENT := $(shell [[ "${TAG}" != "" ]] || echo "present")
+
+ifeq ($(TAG_PRESENT), present)
+	SELECTED_TAG := latest-build
+else
+	SELECTED_TAG := ${TAG}
+endif
+
 all: build
 
-TAG ?= build-dev
 VERSION=5.4-php7.3
 
 build: ## Build image
 	${SUDO} docker build . \
 		--build-arg WP_VERSION=${VERSION} \
-		--build-arg RIOTKIT_IMAGE_VERSION=${TAG} \
-		-t quay.io/riotkit/wp-auto-update:${VERSION}-${TAG}
+		--build-arg RIOTKIT_IMAGE_VERSION=${SELECTED_TAG} \
+		-t quay.io/riotkit/wp-auto-update:${VERSION}-${SELECTED_TAG}
 
 push: ## Push image
-	${SUDO} docker push quay.io/riotkit/wp-auto-update:${VERSION}-${TAG}
+	${SUDO} docker push quay.io/riotkit/wp-auto-update:${VERSION}-${SELECTED_TAG}
 
 run: ## Run a image
 	@echo " >> Wordpress will be running at http://localhost:8000"
-	${SUDO} docker run --rm -d --name test_wordpress -p 8000:80 quay.io/riotkit/wp-auto-update:${VERSION}-$(TAG)
+	${SUDO} docker run --rm -d --name test_wordpress -p 8000:80 quay.io/riotkit/wp-auto-update:${VERSION}-${SELECTED_TAG}
 
 ci@all: _download_libs ## Build all recent Wordpress versions and push to the registry
 	BUILD_PARAMS="--dont-rebuild "; \

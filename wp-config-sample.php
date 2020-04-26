@@ -30,7 +30,7 @@ function str_ends_with($haystack, $needle) {
 
 // support for multiple values in eg. VIRTUAL_HOST, picks first one
 function get_virtual_host($hosts) {
-    $vhost = explode(',');
+    $vhosts = explode(',', $hosts);
     return $vhosts[0];
 }
 

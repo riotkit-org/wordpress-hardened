@@ -20,7 +20,7 @@ run: ## Run a image
 	@echo " >> Wordpress will be running at http://localhost:8000"
 	${SUDO} docker run --rm -d --name test_wordpress -p 8000:80 quay.io/riotkit/wp-auto-update:${VERSION}-$(TAG)
 
-ci@all: ## Build all recent Wordpress versions and push to the registry
+ci@all: _download_libs ## Build all recent Wordpress versions and push to the registry
 	BUILD_PARAMS="--dont-rebuild "; \
 	RELEASE_TAG_TEMPLATE="%MATCH_0%"; \
 	if [[ "$$COMMIT_MESSAGE" == *"@force-rebuild"* ]] || [[ "${GIT_TAG}" != "" ]]; then \

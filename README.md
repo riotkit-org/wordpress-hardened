@@ -21,7 +21,7 @@ Running
 With docker command:
 
 ```bash
-sudo docker run -v $(pwd)/your-www-files:/var/www/html -e WORDPRESS_DB_HOST=... -e WORDPRESS_DB_USER=... -e WORDPRESS_DB_PASSWORD=... -e WORDPRESS_DB_NAME=... -p 80:80 wolnosciowiec/wp-auto-update
+sudo docker run -v $(pwd)/your-www-files:/var/www/html -e WORDPRESS_DB_HOST=... -e WORDPRESS_DB_USER=... -e WORDPRESS_DB_PASSWORD=... -e WORDPRESS_DB_NAME=... -p 80:80 quay.io/riotkit/wp-auto-update:5.4-v1.0.1
 ```
 
 Or with docker-compose:
@@ -30,7 +30,7 @@ Or with docker-compose:
 version: "2.3"
 services:
     app_your_app:
-        image: quay.io/riotkit/wp-auto-update:5.4-v1.0
+        image: quay.io/riotkit/wp-auto-update:5.4-v1.0.1
         volumes:
             - ./your-www-files/:/var/www/html
         environment:

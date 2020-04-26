@@ -42,7 +42,7 @@ function wp_find_page_url() {
     if (isset($_SERVER['WP_PAGE_URL'])) {
         $vhost = get_virtual_host($_SERVER['WP_PAGE_URL']);
 
-        return get_preffered_protocol($vhost) . $vhost];
+        return get_preffered_protocol($vhost) . $vhost;
     }
 
     if (isset($_SERVER['VIRTUAL_HOST'])) {

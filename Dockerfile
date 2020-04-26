@@ -15,6 +15,7 @@ RUN apk --update add nginx supervisor \
 ADD etc/supervisor.conf /etc/supervisor.conf
 ADD etc/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD ./wp-config-sample.php /usr/src/wordpress/wp-config-sample.php
+ADD ./update-wordpress.sh /usr/local/bin/update-wordpress.sh
 ADD ./entrypoint-wp.sh /entrypoint-wp.sh
 
 ENTRYPOINT ["/bin/bash", "/entrypoint-wp.sh"]

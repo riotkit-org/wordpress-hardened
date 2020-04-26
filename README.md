@@ -1,9 +1,12 @@
 Wordpress autoupdate container
 ==============================
 
-Just another Wordpress + PHP + NGINX container, with addition of wp-cli running on each Saturday to perform CMS upgrade.
-Use it like official Wordpress container, there are same configuration variables as same entrypoint is used as in original image.
-The only difference is the installed and configured NGINX and scheduled CMS update.
+Patched version of official Wordpress container.
+
+**Features:**
+- Scheduled updates via wp-cli
+- **NGINX instead of Apache**
+- Support for RiotKit Harbor and NGINX-PROXY (VIRTUAL_HOST environment variable)
 
 Running
 =======
@@ -16,24 +19,26 @@ sudo docker run -v $(pwd)/your-www-files:/var/www/html -e WORDPRESS_DB_HOST=... 
 
 Or with docker-compose:
 
-```
-version: "2"
+```yaml
+version: "2.3"
 services:
     app_your_app:
-        image: wolnosciowiec/wp-auto-update
+        image: quay.io/riotkit/wp-auto-update:5.4-php7.3-b1.0.0
         volumes:
             - ./your-www-files/:/var/www/html
         environment:
-            - WORDPRESS_DB_HOST=db
-            - WORDPRESS_DB_USER=your_user
-            - WORDPRESS_DB_PASSWORD=${DB_PASSWORD_THERE}
-            - WORDPRESS_DB_NAME=your_app
-```
+            WORDPRESS_DB_HOST: "db"
+            WORDPRESS_DB_USER: "your_user"
+            WORDPRESS_DB_PASSWORD: "${DB_PASSWORD_THERE}"
+            WORDPRESS_DB_NAME: "your_app"
+            AUTO_UPDATE_CRON: "0 5 * * SAT"
 
-To have a comple example with MySQL please check out the docker-compose.yml in the repository, modify, run it:
+            # main page URL
+            WP_PAGE_URL: "zsp.net.pl"
 
-```
-sudo docker-compose up
+            # multiple domains can be pointing at this contiainer
+            VIRTUAL_HOST: "zsp.net.pl,www.zsp.net.pl,wroclaw.zsp.net.pl,wwww.wroclaw.zsp.net.pl"
+
 ```
 
 From authors
@@ -43,4 +48,5 @@ Project was started as a part of RiotKit initiative, for the needs of grassroot 
 
 - Fighting for better working conditions syndicalist (International Workers Association for example)
 - Tenants rights organizations
+- Political prisoners supporting organizations
 - Various grassroot organizations that are helping people to organize themselves without authority

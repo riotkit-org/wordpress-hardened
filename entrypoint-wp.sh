@@ -1,38 +1,23 @@
 #!/bin/bash
 
-/usr/local/bin/docker-entrypoint.sh /bin/bash || exit 1
+setup_crontab() {
+    echo "${AUTO_UPDATE_CRON} /bin/bash /usr/local/bin/update-wordpress.sh" > /etc/crontabs/root
+}
 
-echo " >> Preparing features"
-if [[ ${FEATURES} != "" ]]; then
-    IFS=',' read -r -a split_features <<< "${FEATURES}"
+install_wordpress() {
+    # Warning: HACK below :)
+    # mock php-fpm to not start it immediately by WordPress entrypoint
+    mv /usr/local/sbin/php-fpm /usr/local/sbin/php-fpm.bckp
+    ln -s /bin/bash /usr/local/sbin/php-fpm
 
-    echo " .. Enabled features: ${FEATURES}"
+    echo " >> Installing Wordpress"
+    /usr/local/bin/docker-entrypoint.sh php-fpm || exit 1
 
-    for feature in "${split_features[@]}"
-    do
-        echo "   .. Processing feature ${feature}"
-        feature_path="/etc/nginx/features/available.d/${feature}.conf"
+    echo " >> Cleaning up"
+    rm /usr/local/sbin/php-fpm
+    mv /usr/local/sbin/php-fpm.bckp /usr/local/sbin/php-fpm
+}
 
-        if [[ ! -f "${feature_path}" ]]; then
-            echo " >> Unsupported NGINX feature: ${feature}"
-            exit 1
-        fi
-
-        meta=$(head ${feature_path} -n1 | grep "@feature:")
-        target_path=$(echo ${meta} | awk '{print $3}')
-
-        if [[ ! "${target_path}" ]]; then
-            target_path=$(echo ${meta} | awk '{print $2}')
-        fi
-
-        if [[ ! "${target_path}" ]]; then
-            echo " >> ERROR: Feature ${feature} does not contain a valid feature header"
-            echo "    Example: #@feature: /etc/nginx/features/fastcgi.d"
-            exit 1
-        fi
-
-        set -x; cp "${feature_path}" "${target_path}/"; set +x;
-    done
-fi
-
+setup_crontab
+install_wordpress
 exec supervisord -c /etc/supervisor.conf

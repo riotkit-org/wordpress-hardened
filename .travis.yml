@@ -6,6 +6,7 @@ services:
 
 before_script:
     - echo "$QUAY_PASSWORD" | sudo docker login -u "$QUAY_USERNAME" --password-stdin quay.io
+    - pip install requests
 
 script:
     - make ci@all COMMIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" GIT_TAG="${TRAVIS_TAG}"

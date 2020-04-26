@@ -1,4 +1,5 @@
 SUDO=sudo
+SHELL=/bin/bash
 RIOTKIT_UTILS_VERSION=2.2.0
 CI_UTILS_BIN=./.helpers/ci-utils-${RIOTKIT_UTILS_VERSION}/bin
 

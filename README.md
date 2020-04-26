@@ -13,7 +13,7 @@ Versions
 
 See: https://quay.io/repository/riotkit/wp-auto-update?tab=tags
 
-Example: `quay.io/riotkit/wp-auto-update:5.4-v1.0`
+Example: `quay.io/riotkit/wp-auto-update:5.4-v1.0.1`
 
 Running
 =======

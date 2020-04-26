@@ -23,7 +23,7 @@ Or with docker-compose:
 version: "2.3"
 services:
     app_your_app:
-        image: quay.io/riotkit/wp-auto-update:5.4-php7.3-b1.0.0
+        image: quay.io/riotkit/wp-auto-update:5.4-v1.0
         volumes:
             - ./your-www-files/:/var/www/html
         environment:

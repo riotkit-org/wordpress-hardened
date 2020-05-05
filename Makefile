@@ -38,7 +38,7 @@ ci@all: _download_libs ## Build all recent Wordpress versions and push to the re
 		fi; \
 	fi; \
 	set -x; \
-	${CI_UTILS_BIN}/for-each-github-release --exec "make build push VERSION=%MATCH_0% TAG=$$GIT_TAG" --repo-name WordPress/WordPress --dest-docker-repo quay.io/riotkit/wp-auto-update $${BUILD_PARAMS}--allowed-tags-regexp="([0-9\.]+)$$" --release-tag-template="$${RELEASE_TAG_TEMPLATE}" --max-versions=3 --verbose
+	${CI_UTILS_BIN}/for-each-github-release --exec "make build push VERSION=%MATCH_0% TAG=$$GIT_TAG" --repo-name WordPress/WordPress --dest-docker-repo quay.io/riotkit/wp-auto-update $${BUILD_PARAMS}--allowed-tags-regexp="([0-9\.]+)$$" --release-tag-template="$${RELEASE_TAG_TEMPLATE}" --max-versions=2 --verbose
 
 _download_libs:
 	@export RIOTKIT_UTILS_VERSION=${RIOTKIT_UTILS_VERSION} \

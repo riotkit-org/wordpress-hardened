@@ -59,6 +59,14 @@ if ($pageUrl) {
     define('WP_SITEURL', $pageUrl);
 }
 
+if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    $list = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+
+    if (isset($list[0]) && $list[0]) {
+        $_SERVER['REMOTE_ADDR'] = $list[0];
+    }
+}
+
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
 define( 'DB_NAME', 'database_name_here' );

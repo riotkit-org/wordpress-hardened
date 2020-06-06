@@ -18,78 +18,30 @@
  * @package WordPress
  */
 
-function str_ends_with($haystack, $needle) {
-    $length = strlen($needle);
+require_once __DIR__ . '/wp-config-riotkit.php';
 
-    if ($length == 0) {
-        return true;
-    }
-
-    return (substr($haystack, -$length) === $needle);
-}
-
-// support for multiple values in eg. VIRTUAL_HOST, picks first one
-function get_virtual_host($hosts) {
-    $vhosts = explode(',', $hosts);
-    return $vhosts[0];
-}
-
-function get_preferred_protocol ($url) {
-    return str_ends_with($url, '.localhost') ? 'http://' : 'https://';
-}
-
-function wp_find_page_url() {
-    if (isset($_SERVER['WP_PAGE_URL'])) {
-        $vhost = get_virtual_host($_SERVER['WP_PAGE_URL']);
-
-        return get_preferred_protocol($vhost) . $vhost;
-    }
-
-    if (isset($_SERVER['VIRTUAL_HOST'])) {
-        $vhost = get_virtual_host($_SERVER['VIRTUAL_HOST']);
-
-        return get_preferred_protocol($vhost) . $vhost;
-    }
-}
-
-$pageUrl = wp_find_page_url();
-$preferredProtocol = get_preferred_protocol($pageUrl);
-
-if ($pageUrl) {
-    define('WP_HOME', $pageUrl);
-    define('WP_SITEURL', $pageUrl);
-}
-
-if ($preferredProtocol === 'https://') {
-    define('FORCE_SSL_ADMIN', true);
-}
-
-if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-    $list = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-
-    if (isset($list[0]) && $list[0]) {
-        $_SERVER['REMOTE_ADDR'] = $list[0];
-    }
-}
+/*
+ * WARNING: DB CREDENTIALS DEFINED THERE HAVE NO EFFECT. AS THOSE ARE DEFINED IN wp-config-riotkit.php IN PRIORITY AND TAKEN FROM ENVIRONMENT!
+ */
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
-define( 'DB_NAME', 'database_name_here' );
+@define( 'DB_NAME', 'database_name_here' );
 
 /** MySQL database username */
-define( 'DB_USER', 'username_here' );
+@define( 'DB_USER', 'username_here' );
 
 /** MySQL database password */
-define( 'DB_PASSWORD', 'password_here' );
+@define( 'DB_PASSWORD', 'password_here' );
 
 /** MySQL hostname */
-define( 'DB_HOST', 'localhost' );
+@define( 'DB_HOST', 'localhost' );
 
 /** Database Charset to use in creating database tables. */
-define( 'DB_CHARSET', 'utf8' );
+@define( 'DB_CHARSET', 'utf8' );
 
 /** The Database Collate type. Don't change this if in doubt. */
-define( 'DB_COLLATE', '' );
+@define( 'DB_COLLATE', '' );
 
 /**#@+
  * Authentication Unique Keys and Salts.

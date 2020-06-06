@@ -17,6 +17,7 @@ RUN apk --update add nginx supervisor python3 py3-pip \
 ADD etc/supervisor.conf /etc/supervisor.conf
 ADD etc/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD ./wp-config-sample.php /usr/src/wordpress/wp-config-sample.php
+ADD ./wp-config-riotkit.php /usr/src/wordpress/wp-config-riotkit.php
 ADD ./update-wordpress.sh /usr/local/bin/update-wordpress.sh
 ADD ./entrypoint-wp.sh /entrypoint-wp.sh
 ADD ./usr /templates/usr

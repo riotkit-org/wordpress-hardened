@@ -34,7 +34,7 @@ function get_virtual_host($hosts) {
     return $vhosts[0];
 }
 
-function get_preffered_protocol ($url) {
+function get_preferred_protocol ($url) {
     return str_ends_with($url, '.localhost') ? 'http://' : 'https://';
 }
 
@@ -42,21 +42,26 @@ function wp_find_page_url() {
     if (isset($_SERVER['WP_PAGE_URL'])) {
         $vhost = get_virtual_host($_SERVER['WP_PAGE_URL']);
 
-        return get_preffered_protocol($vhost) . $vhost;
+        return get_preferred_protocol($vhost) . $vhost;
     }
 
     if (isset($_SERVER['VIRTUAL_HOST'])) {
         $vhost = get_virtual_host($_SERVER['VIRTUAL_HOST']);
 
-        return get_preffered_protocol($vhost) . $vhost;
+        return get_preferred_protocol($vhost) . $vhost;
     }
 }
 
 $pageUrl = wp_find_page_url();
+$preferredProtocol = get_preferred_protocol($pageUrl);
 
 if ($pageUrl) {
     define('WP_HOME', $pageUrl);
     define('WP_SITEURL', $pageUrl);
+}
+
+if ($preferredProtocol === 'https://') {
+    define('FORCE_SSL_ADMIN', true);
 }
 
 if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {

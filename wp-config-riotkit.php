@@ -21,12 +21,18 @@ function get_preferred_protocol ($url) {
 }
 
 function wp_find_page_url() {
+    /**
+     * WP_PAGE_URL allows to customize the page url via environment variables
+     */
     if (isset($_SERVER['WP_PAGE_URL'])) {
         $vhost = get_virtual_host($_SERVER['WP_PAGE_URL']);
 
         return get_preferred_protocol($vhost) . $vhost;
     }
 
+    /**
+     * Integrates with RiotKit Harbor and with NGINX Proxy
+     */
     if (isset($_SERVER['VIRTUAL_HOST'])) {
         $vhost = get_virtual_host($_SERVER['VIRTUAL_HOST']);
 
@@ -54,7 +60,13 @@ if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
     }
 }
 
-@define('DB_NAME', $_SERVER['WORDPRESS_DB_NAME']);
-@define('DB_USER', $_SERVER['WORDPRESS_DB_USER']);
+// integration with RiotKit Harbor
+if (isset($_SERVER['HTTP_HARBOR_REAL_IP']) && $_SERVER['HTTP_HARBOR_REAL_IP']) {
+    $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_HARBOR_REAL_IP'];
+}
+
+// will always react on environment change
+@define('DB_NAME',     $_SERVER['WORDPRESS_DB_NAME']);
+@define('DB_USER',     $_SERVER['WORDPRESS_DB_USER']);
 @define('DB_PASSWORD', $_SERVER['WORDPRESS_DB_PASSWORD']);
-@define('DB_HOST', $_SERVER['WORDPRESS_DB_HOST']);
+@define('DB_HOST',     $_SERVER['WORDPRESS_DB_HOST']);

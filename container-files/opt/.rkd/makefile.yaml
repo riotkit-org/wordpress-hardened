@@ -11,7 +11,17 @@ tasks:
             %RKD% :setup:crontab \
                   :setup:configs \
                   :setup:wordpress-files \
+                  :setup:basicauth \
                   :run:supervisor
+
+    :setup:basicauth:
+        steps: |
+            if [[ "${BASIC_AUTH_USER}" ]] && [[ "${BASIC_AUTH_PASSWORD}" ]]; then
+                echo " >> Writing to basic auth file - /opt/htpasswd"
+                htpasswd -b -c /opt/htpasswd "${BASIC_AUTH_USER}" "${BASIC_AUTH_PASSWORD}"
+            else
+                echo " >> No user or password set, skipping writing to /opt/htpasswd"
+            fi
 
     :run:supervisor:
         description: Run supervisor with applications
@@ -28,7 +38,6 @@ tasks:
             %RKD% :j2:directory-to-directory \
                 --source=/templates \
                 --target=/ \
-                --delete-source-files \
                 --pattern="(.*).j2" \
                 --copy-not-matching-files
 

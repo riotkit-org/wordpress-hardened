@@ -7,6 +7,22 @@ Patched version of official Wordpress container.
 - Scheduled updates via wp-cli
 - **NGINX instead of Apache**
 - Support for RiotKit Harbor and NGINX-PROXY (VIRTUAL_HOST environment variable)
+- Basic Auth enabled by default to protect wp-login and wp-admin against bots (default user: `riotkit`, password: `riotkit`)
+
+Changing basic auth password or disabling it at all
+===================================================
+
+**Disabling:**
+
+```bash
+-e BASIC_AUTH_ENABLED=false
+```
+
+**Changing password:**
+
+```bash
+-e BASIC_AUTH_USER=some-user -e BASIC_AUTH_PASSWORD=some-password
+```
 
 Versions
 ========
@@ -39,6 +55,11 @@ services:
             WORDPRESS_DB_PASSWORD: "${DB_PASSWORD_THERE}"
             WORDPRESS_DB_NAME: "your_app"
             AUTO_UPDATE_CRON: "0 5 * * SAT"
+          
+            # basic auth on administrative endpoints
+            BASIC_AUTH_ENABLED=true
+            BASIC_AUTH_USER: john
+            BASIC_AUTH_PASSWORD: secret
 
             # main page URL
             WP_PAGE_URL: "zsp.net.pl"
@@ -46,6 +67,19 @@ services:
             # multiple domains can be pointing at this contiainer
             VIRTUAL_HOST: "zsp.net.pl,www.zsp.net.pl,wroclaw.zsp.net.pl,wwww.wroclaw.zsp.net.pl"
 
+```
+
+Building and debugging image
+----------------------------
+
+**Build and run a snapshot locally:**
+
+```bash
+# build
+rkd :boat-ci:specific-release -v 1.0 --app-version 5.5 --dir . --dest-docker-repo="quay.io/riotkit/wp-auto-update" --docker-build-opts="" --become=root
+
+# run
+docker run -p 8001:80 --rm --name wp quay.io/riotkit/wp-auto-update:1.0
 ```
 
 From authors

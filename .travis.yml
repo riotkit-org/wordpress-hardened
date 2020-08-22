@@ -5,7 +5,7 @@ services:
     - docker
 
 before_script:
-    - echo "$QUAY_PASSWORD" | sudo docker login -u "$QUAY_USERNAME" --password-stdin quay.io
+    - echo "$QUAY_PASSWORD" | docker login -u "$QUAY_USERNAME" --password-stdin quay.io
 
 script:
     - rkd :ci:build-all-versions --commit-msg="$TRAVIS_COMMIT_MESSAGE"

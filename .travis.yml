@@ -1,12 +1,11 @@
 language: python
 if: branch = master or tag IS present
-python: 3.6
+python: 3.8
 services:
     - docker
 
 before_script:
     - echo "$QUAY_PASSWORD" | sudo docker login -u "$QUAY_USERNAME" --password-stdin quay.io
-    - pip install requests
 
 script:
-    - make ci@all COMMIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" GIT_TAG="${TRAVIS_TAG}"
+    - rkd :ci:build-all-versions --commit-msg="$TRAVIS_COMMIT_MESSAGE"

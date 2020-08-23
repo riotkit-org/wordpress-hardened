@@ -7,7 +7,8 @@ Patched version of official Wordpress container.
 - Scheduled updates via wp-cli
 - **NGINX instead of Apache**
 - Support for RiotKit Harbor and NGINX-PROXY (VIRTUAL_HOST environment variable)
-- Basic Auth enabled by default to protect wp-login and wp-admin against bots (default user: `riotkit`, password: `riotkit`)
+- Hardened settings for Wordpress: limiting access to code execution from wp-content directory, disabling xmlrpc.php, basic auth on wp-login.php
+- Basic Auth enabled by default to protect wp-login against bots (default user: `riotkit`, password: `riotkit`)
 
 Changing basic auth password or disabling it at all
 ===================================================

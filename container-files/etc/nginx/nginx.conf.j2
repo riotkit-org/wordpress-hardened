@@ -90,16 +90,6 @@ http {
 
             break;
         }
-
-        location ~ /wp-admin {
-            auth_basic "Access secured";
-            auth_basic_user_file /opt/htpasswd;
-
-            try_files $fastcgi_script_name =404;
-            fastcgi_pass localhost:9000;
-
-            break;
-        }
         {% endif %}
 
         location / {

@@ -55,9 +55,11 @@ services:
             WORDPRESS_DB_PASSWORD: "${DB_PASSWORD_THERE}"
             WORDPRESS_DB_NAME: "your_app"
             AUTO_UPDATE_CRON: "0 5 * * SAT"
+            XMLRPC_DISABLED: "true"
+            DISABLE_DIRECT_CONTENT_PHP_EXECUTION: "false"
           
             # basic auth on administrative endpoints
-            BASIC_AUTH_ENABLED=true
+            BASIC_AUTH_ENABLED: "true"
             BASIC_AUTH_USER: john
             BASIC_AUTH_PASSWORD: secret
 

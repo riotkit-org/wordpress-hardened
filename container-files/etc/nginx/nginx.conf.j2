@@ -68,6 +68,8 @@ http {
         fastcgi_param PATH_INFO $path_info;
         fastcgi_index index.php;
         fastcgi_read_timeout 60s;
+        fastcgi_hide_header X-Powered-By;
+        proxy_hide_header X-Powered-By;
 
         location = /favicon.ico {
             log_not_found off;
@@ -80,7 +82,7 @@ http {
             access_log off;
         }
 
-        {% if BASIC_AUTH_ENABLED %}
+        {% if BASIC_AUTH_ENABLED == "true" %}
         location ^~ /wp-login.php {
             auth_basic "Access secured";
             auth_basic_user_file /opt/htpasswd;
@@ -91,6 +93,39 @@ http {
             break;
         }
         {% endif %}
+
+        {% if XMLRPC_DISABLED == "true" %}
+        location = /xmlrpc.php {
+            allow 172.0.1.1;
+            deny all;
+            access_log off;
+            log_not_found off;
+            return 444;
+        }
+        {% endif %}
+
+        {% if DISABLE_DIRECT_CONTENT_PHP_EXECUTION == "true" %}
+        location ~* /(?:uploads|files|wp-content|wp-includes|akismet)/.*.php$ {
+            deny all;
+            access_log off;
+            log_not_found off;
+        }
+        {% endif %}
+
+        location ~ /\.(svn|git)/* {
+            deny all;
+            access_log off;
+            log_not_found off;
+
+            break;
+        }
+        location ~ /\.ht {
+            deny all;
+            access_log off;
+            log_not_found off;
+
+            break;
+        }
 
         location / {
             # This is cool because no php is touched for static content.

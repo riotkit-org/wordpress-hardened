@@ -18,7 +18,8 @@
  * @package WordPress
  */
 
-require_once __DIR__ . '/wp-config-riotkit.php';
+// by including it from /usr/src we make sure it will be always up-to-date, when we update the image
+require_once '/usr/src/wordpress/wp-config-riotkit.php';
 
 /*
  * WARNING: DB CREDENTIALS DEFINED THERE HAVE NO EFFECT. AS THOSE ARE DEFINED IN wp-config-riotkit.php IN PRIORITY AND TAKEN FROM ENVIRONMENT!

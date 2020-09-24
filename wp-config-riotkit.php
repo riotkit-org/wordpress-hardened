@@ -70,3 +70,9 @@ if (isset($_SERVER['HTTP_HARBOR_REAL_IP']) && $_SERVER['HTTP_HARBOR_REAL_IP']) {
 @define('DB_USER',     $_SERVER['WORDPRESS_DB_USER']);
 @define('DB_PASSWORD', $_SERVER['WORDPRESS_DB_PASSWORD']);
 @define('DB_HOST',     $_SERVER['WORDPRESS_DB_HOST']);
+
+// If we're behind a proxy server and using HTTPS, we need to alert WordPress of that fact
+// see also http://codex.wordpress.org/Administration_Over_SSL#Using_a_Reverse_Proxy
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+        $_SERVER['HTTPS'] = 'on';
+}

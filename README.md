@@ -1,5 +1,5 @@
-Wordpress autoupdate container
-==============================
+Wordpress + NGINX
+=================
 
 Patched version of official Wordpress container.
 
@@ -10,8 +10,14 @@ Patched version of official Wordpress container.
 - Hardened settings for Wordpress: limiting access to code execution from wp-content directory, disabling xmlrpc.php, basic auth on wp-login.php
 - Basic Auth enabled by default to protect wp-login against bots (default user: `riotkit`, password: `riotkit`)
 
+Roadmap
+-------
+
+[ ] Helm Chart
+[ ] Support WAF (Web Application Firewall) with OWASP rules
+
 Changing basic auth password or disabling it at all
-===================================================
+---------------------------------------------------
 
 **Disabling:**
 
@@ -26,14 +32,14 @@ Changing basic auth password or disabling it at all
 ```
 
 Versions
-========
+--------
 
 See: https://quay.io/repository/riotkit/wp-auto-update?tab=tags
 
 Example: `quay.io/riotkit/wp-auto-update:5.4-v1.0.1`
 
 Running
-=======
+-------
 
 With docker command:
 
@@ -86,7 +92,7 @@ docker run -p 8001:80 --rm --name wp quay.io/riotkit/wp-auto-update:1.0
 ```
 
 From authors
-============
+------------
 
 Project was started as a part of RiotKit initiative, for the needs of grassroot organizations such as:
 

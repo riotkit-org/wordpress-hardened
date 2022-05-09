@@ -1,0 +1,6 @@
+apiVersion: v2
+name: wordpress-hardened
+description: "Lightweight Wordpress installation with additional security fixes"
+type: application
+version: 0.1.0
+appVersion: "main"  # replaced by CI on build stage

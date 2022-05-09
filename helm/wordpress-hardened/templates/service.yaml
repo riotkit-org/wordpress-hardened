@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: {{ include "wordpress-hardened.fullname" . }}
+    labels:
+        {{- include "wordpress-hardened.labels" . | nindent 8 }}
+spec:
+    type: {{ .Values.service.type }}
+    ports:
+        - port: 8080
+          targetPort: http
+          protocol: TCP
+          name: http
+    selector:
+        {{- include "wordpress-hardened.selectorLabels" . | nindent 8 }}

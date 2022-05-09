@@ -1,0 +1,100 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ include "wordpress-hardened.fullname" . }}
+    labels:
+        {{- include "wordpress-hardened.labels" . | nindent 8 }}
+spec:
+    replicas: {{ .Values.replicas }}
+    selector:
+        matchLabels:
+            {{- include "wordpress-hardened.selectorLabels" . | nindent 10 }}
+    template:
+        metadata:
+          {{- with .Values.podAnnotations }}
+            annotations:
+              {{- toYaml . | nindent 16 }}
+          {{- end }}
+            labels:
+              {{- include "wordpress-hardened.selectorLabels" . | nindent 16 }}
+              {{- if eq (.Values.image.tag | default .Chart.AppVersion) "latest" | or (eq (.Values.image.tag | default .Chart.AppVersion) "snapshot") }}
+                  refreshImageTag: "{{- randAlphaNum 24 | nospace -}}"
+              {{- end }}
+        spec:
+            automountServiceAccountToken: false
+            terminationGracePeriodSeconds: 5
+            {{- with .Values.podSecurityContext }}
+            securityContext:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+            {{- with .Values.nodeSelector }}
+            nodeSelector:
+                {{- toYaml . | nindent 14 }}
+            {{- end }}
+            {{- with .Values.affinity }}
+            affinity:
+                {{- toYaml . | nindent 14 }}
+            {{- end }}
+            {{- with .Values.tolerations }}
+            tolerations:
+                {{- toYaml . | nindent 14 }}
+            {{- end }}
+            containers:
+                - name: app
+                  image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+                  imagePullPolicy: Always
+                  env:
+                      {{- with .Values.env }}
+                      {{- range $key, $value := . }}
+                      - name: {{ $key }}
+                        value: "{{ $value }}"
+                      {{- end }}
+                      {{- end }}
+                  envFrom:
+                      - secretRef:
+                            name: {{ include "wordpress-hardened.fullname" . }}
+                  securityContex:
+                      allowPrivilegeEscalation: false
+                  volumeMounts:
+                      - name: wp
+                        mountPath: /var/www/riotkit
+                      {{- if .Values.keepWordpressMainFilesInPV }}
+                      - name: wp-content
+                        mountPath: /var/www/riotkit/wp-content
+                      {{- end }}
+                  ports:
+                      - name: http
+                        containerPort: 8080
+                        protocol: TCP
+                  {{- if .Values.health.liveness.enabled }}
+                  livenessProbe:
+                      {{- with .Values.health.liveness.attributes}}
+                      {{- toYaml . | nindent 22 }}
+                      {{- end}}
+                      httpGet:
+                          path: /health
+                          scheme: HTTPS
+                          port: https
+                  {{- end }}
+                  {{- if .Values.health.readiness.enabled }}
+                  readinessProbe:
+                      {{- with .Values.health.readiness.attributes }}
+                      {{- toYaml . | nindent 22 }}
+                      {{- end }}
+                      httpGet:
+                          path: /index.php
+                          scheme: HTTPS
+                          port: https
+                  {{- end }}
+                  resources:
+                      {{- toYaml .Values.resources | nindent 20 }}
+            volumes:
+                {{- if .Values.keepWordpressMainFilesInPV }}
+                - name: wp
+                  persistentVolumeClaim:
+                      name: {{ include "wordpress-hardened.fullname" . }}-wp
+                {{- end }}
+                - name: wp-content
+                  persistentVolumeClaim:
+                      name: {{ include "wordpress-hardened.fullname" . }}-wp-content

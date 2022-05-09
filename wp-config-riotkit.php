@@ -71,8 +71,21 @@ if (isset($_SERVER['HTTP_HARBOR_REAL_IP']) && $_SERVER['HTTP_HARBOR_REAL_IP']) {
 @define('DB_PASSWORD', $_SERVER['WORDPRESS_DB_PASSWORD']);
 @define('DB_HOST',     $_SERVER['WORDPRESS_DB_HOST']);
 
+$secretsFromEnv = [
+    'AUTH_KEY', 'SECURE_AUTH_KEY', 'LOGGED_IN_KEY', 'NONCE_KEY', 'AUTH_SALT',
+    'SECURE_AUTH_SALT', 'LOGGED_IN_SALT', 'NONCE_SALT',
+];
+
+foreach ($secretsFromEnv as $name) {
+    if (isset($_SERVER[$name])) {
+        @define($name, $_SERVER[$name]);
+    }
+}
+
 // If we're behind a proxy server and using HTTPS, we need to alert WordPress of that fact
 // see also http://codex.wordpress.org/Administration_Over_SSL#Using_a_Reverse_Proxy
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
         $_SERVER['HTTPS'] = 'on';
 }
+
+@define('DISALLOW_FILE_EDIT', true);

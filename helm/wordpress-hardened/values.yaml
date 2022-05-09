@@ -1,0 +1,48 @@
+image:
+    repository: ghcr.io/riotkit-org/wordpress-hardened
+    tag: "" # defaults to {{ .Release.appVersion }}
+
+podSecurityContext:
+    runAsUser: 65161
+    runAsGroup: 65161
+    fsGroup: 65161
+
+keepWordpressMainFilesInPV: true
+
+ingress:
+    # className: nginx
+    #secretName: ...
+    tls:
+        #hosts: ["wordpress.org"]
+
+env: {}
+
+secrets:
+    name: wordpress-secrets
+    content: |
+        ---
+        apiVersion: bitnami.com/v1
+        kind: SealedSecret
+        name: wordpress-secrets
+
+resources:
+    requests:
+        memory: 16Mi
+        cpu: 0
+    limits:
+        memory: 128Mi
+        cpu: 1
+
+health:
+    liveness:
+        enabled: true
+        attributes:
+            failureThreshold: 1
+            terminationGracePeriodSeconds: 10
+    readiness:
+        enabled: true
+        attributes: {}
+
+service:
+    type: ClusterIP
+    port: 8080

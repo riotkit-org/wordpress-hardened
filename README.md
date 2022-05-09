@@ -12,7 +12,6 @@ Hardened version of official Wordpress container, with special support for Kuber
 - Helm installer for Kubernetes
 - Non-root container
 - Free from Supervisord, using lightweight [multirun](https://github.com/nicolas-van/multirun) instead
-- WAF (Web Application Firewall) built-in to block potential exploits
 - Runtime NGINX and PHP configuration to adjust things like `memory_limit`, `error_reporting` or `post_max_size`
 
 Roadmap

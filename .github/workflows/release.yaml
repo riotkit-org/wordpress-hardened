@@ -1,0 +1,86 @@
+name: Test and release
+on:
+    push:
+
+jobs:
+    test:
+        runs-on: ubuntu-20.04
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0
+
+            - name: Set up Helm
+              uses: azure/setup-helm@v1
+              with:
+                  version: v3.8.1
+
+            - name: Linting
+              working-directory: helm/wordpress-hardened
+              run: helm lint ./
+
+            - name: Template and default values check
+              working-directory: helm/wordpress-hardened
+              run: helm template ./
+
+    release-docker:
+        runs-on: ubuntu-20.04
+        needs: ["test"]
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v1
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Create docker tags
+              id: meta
+              uses: docker/metadata-action@v3
+              with:
+                  images: ghcr.io/riotkit-org/wordpress-hardened
+
+            - name: Build and release docker
+              uses: docker/build-push-action@v2
+              with:
+                  context: .
+                  push: ${{ github.event_name != 'pull_request' }}
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+
+    release-chart:
+        runs-on: ubuntu-20.04
+        needs: ["release-docker"]
+        if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0
+
+            - name: Configure Git
+              run: |
+                  git config user.name "$GITHUB_ACTOR"
+                  git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+            - name: Publish Helm chart
+              uses: stefanprodan/helm-gh-pages@master
+              with:
+                  token: "${{ secrets.GH_RW_TOKEN }}"
+                  charts_dir: helm
+                  charts_url: https://riotkit-org.github.io/helm-of-revolution
+                  owner: riotkit-org
+                  repository: helm-of-revolution
+                  branch: gh-pages
+                  target_dir: ./
+                  commit_username: "${{ env.GITHUB_ACTOR }}"
+                  commit_email: "${{ env.GITHUB_ACTOR }}@users.noreply.github.com"
+
+                  app_version: "${{github.ref_name}}"
+                  chart_version: "${{github.ref_name}}"

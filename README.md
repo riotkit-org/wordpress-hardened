@@ -24,6 +24,7 @@ Roadmap
 - [ ] Helm Chart
 - [ ] Support for Network Policy templates
 - [ ] Support WAF (Web Application Firewall) with [Wordpress-dedicated rules](https://github.com/Rev3rseSecurity/wordpress-modsecurity-ruleset)
+- [ ] Real liveness and readiness checks
 
 Changing basic auth password or disabling it at all
 ---------------------------------------------------

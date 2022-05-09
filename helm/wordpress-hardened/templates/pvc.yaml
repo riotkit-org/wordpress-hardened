@@ -1,0 +1,33 @@
+{{- if and .Values.pv.wp.enabled .Values.pv.wp.create }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: {{ .Values.pv.wp.claimName }}
+spec:
+    {{- if .Values.pv.storageClassName }}
+    storageClassName: {{ .Values.pv.wp.storageClassName }}
+    {{- end }}
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: {{ .Values.pv.wp.size }}
+{{- end }}
+
+{{- if .Values.pv.wp_content.create }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: {{ .Values.pv.wp_content.claimName }}
+spec:
+  {{- if .Values.pv.storageClassName }}
+    storageClassName: {{ .Values.pv.wp_content.storageClassName }}
+  {{- end }}
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: {{ .Values.pv.wp_content.size }}
+{{- end }}

@@ -17,10 +17,10 @@ spec:
               {{- toYaml . | nindent 16 }}
           {{- end }}
             labels:
-              {{- include "wordpress-hardened.selectorLabels" . | nindent 16 }}
-              {{- if eq (.Values.image.tag | default .Chart.AppVersion) "latest" | or (eq (.Values.image.tag | default .Chart.AppVersion) "snapshot") }}
-                  refreshImageTag: "{{- randAlphaNum 24 | nospace -}}"
-              {{- end }}
+                {{- include "wordpress-hardened.selectorLabels" . | nindent 16 }}
+                {{- if eq (.Values.image.tag | default .Chart.AppVersion) "latest" | or (eq (.Values.image.tag | default .Chart.AppVersion) "snapshot") }}
+                refreshImageTag: "{{- randAlphaNum 24 | nospace -}}"
+                {{- end }}
         spec:
             automountServiceAccountToken: false
             terminationGracePeriodSeconds: 5
@@ -53,16 +53,16 @@ spec:
                       {{- end }}
                   envFrom:
                       - secretRef:
-                            name: {{ include "wordpress-hardened.fullname" . }}
-                  securityContex:
+                            name: {{ .Values.secrets.name }}
+                  securityContext:
                       allowPrivilegeEscalation: false
                   volumeMounts:
+                      {{- if .Values.pv.wp.enabled }}
                       - name: wp
                         mountPath: /var/www/riotkit
-                      {{- if .Values.keepWordpressMainFilesInPV }}
+                      {{- end }}
                       - name: wp-content
                         mountPath: /var/www/riotkit/wp-content
-                      {{- end }}
                   ports:
                       - name: http
                         containerPort: 8080
@@ -73,9 +73,9 @@ spec:
                       {{- toYaml . | nindent 22 }}
                       {{- end}}
                       httpGet:
-                          path: /health
-                          scheme: HTTPS
-                          port: https
+                          path: /index.php
+                          scheme: HTTP
+                          port: http
                   {{- end }}
                   {{- if .Values.health.readiness.enabled }}
                   readinessProbe:
@@ -84,17 +84,17 @@ spec:
                       {{- end }}
                       httpGet:
                           path: /index.php
-                          scheme: HTTPS
-                          port: https
+                          scheme: HTTP
+                          port: http
                   {{- end }}
                   resources:
                       {{- toYaml .Values.resources | nindent 20 }}
             volumes:
-                {{- if .Values.keepWordpressMainFilesInPV }}
+                {{- if .Values.pv.wp.enabled }}
                 - name: wp
                   persistentVolumeClaim:
-                      name: {{ include "wordpress-hardened.fullname" . }}-wp
+                      claimName: {{ .Values.pv.wp.claimName }}
                 {{- end }}
                 - name: wp-content
                   persistentVolumeClaim:
-                      name: {{ include "wordpress-hardened.fullname" . }}-wp-content
+                      claimName: {{ .Values.pv.wp_content.claimName }}

@@ -7,23 +7,52 @@ podSecurityContext:
     runAsGroup: 65161
     fsGroup: 65161
 
-keepWordpressMainFilesInPV: true
+pv:
+    wp:
+        enabled: true
+        create: true
+        claimName: wp
+        size: 256Mi
+        #storageClassName: "..."
+    wp_content:
+        claimName: wp-content
+        create: true
+        size: 1Gi
+        #storageClassName: "..."
+
 
 ingress:
     # className: nginx
     #secretName: ...
     tls:
-        #hosts: ["wordpress.org"]
+        #hosts: ["my-page.org"]
 
-env: {}
+env:
+    HTTPS: "on"
+    WP_PAGE_URL: "https://my-page.org"
 
 secrets:
     name: wordpress-secrets
     content: |
         ---
-        apiVersion: bitnami.com/v1
-        kind: SealedSecret
-        name: wordpress-secrets
+        apiVersion: v1
+        kind: Secret
+        metadata:
+            name: wordpress-secrets
+        stringData:
+            AUTH_KEY: change-me
+            SECURE_AUTH_KEY: change-me
+            LOGGED_IN_KEY: change-me
+            NONCE_KEY: change-me
+            AUTH_SALT: change-me
+            SECURE_AUTH_SALT: change-me
+            LOGGED_IN_SALT: change-me
+            NONCE_SALT: change-me
+        
+            WORDPRESS_DB_NAME: "wordpress"
+            WORDPRESS_DB_USER: "wordpress"
+            WORDPRESS_DB_PASSWORD: "secret"
+            WORDPRESS_DB_HOST: "mariadb.db.svc.cluster.local"
 
 resources:
     requests:

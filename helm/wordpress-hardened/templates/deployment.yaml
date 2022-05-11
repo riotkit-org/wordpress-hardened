@@ -10,6 +10,14 @@ spec:
     selector:
         matchLabels:
             {{- include "wordpress-hardened.selectorLabels" . | nindent 10 }}
+
+    {{- if .Values.rollingUpdate.enabled }}
+    strategy:
+        type: RollingUpdate
+        rollingUpdate:
+            {{ toYaml .Values.rollingUpdate.spec | nindent 12 }}
+    {{- end }}
+
     template:
         metadata:
           {{- with .Values.podAnnotations }}

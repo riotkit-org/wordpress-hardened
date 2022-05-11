@@ -1,43 +1,47 @@
-{{- if .Values.ingress.enabled -}}
-  {{- $fullName := include "wordpress-hardened.fullname" . -}}
-  {{- $svcPort := .Values.service.port -}}
-  {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
-  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
-  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
-  {{- end }}
-  {{- end }}
-  {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- range $num, $ingress := $.Values.ingresses }}
+{{- $fullName := include "wordpress-hardened.fullname" $ }}
+
+---
+  {{ $svcPort := $.Values.service.port -}}
+  {{ if and $ingress.className (not (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion)) }}
+  {{ if not (hasKey $ingress.annotations "kubernetes.io/ingress.class") }}
+  {{ $_ := set $ingress.annotations "kubernetes.io/ingress.class" $ingress.className}}
+  {{ end }}
+  {{ end }}
+  {{ if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1
-  {{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+  {{- else if semverCompare ">=1.14-0" $.Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1beta1
   {{- else -}}
 apiVersion: extensions/v1beta1
   {{- end }}
 kind: Ingress
 metadata:
-    name: {{ $fullName }}
+    name: {{ .name }}
     labels:
-      {{- include "wordpress-hardened.labels" . | nindent 6 }}
-  {{- with .Values.ingress.annotations }}
+      {{- include "wordpress-hardened.labels" $ | nindent 6 }}
+  {{- with $ingress.annotations }}
     annotations:
-      {{- toYaml . | nindent 4 }}
+      {{- toYaml . | nindent 6 }}
   {{- end }}
 spec:
-  {{- if and (and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) .Values.ingress.className }}
-    ingressClassName: {{ .Values.ingress.className }}
+  {{- if and (and $ingress.className (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion)) $ingress.className }}
+    ingressClassName: {{ $ingress.className }}
   {{- end }}
-  {{- if .Values.ingress.tls }}
+  {{- if $ingress.tls }}
     tls:
-      {{- range .Values.ingress.tls }}
+      {{- range $ingress.tls }}
         - hosts:
             {{- range .hosts }}
               - {{ . | quote }}
             {{- end }}
+          {{- if .secretName }}
           secretName: {{ .secretName }}
+          {{- end }}
       {{- end }}
   {{- end }}
     rules:
-      {{- range .Values.ingress.hosts }}
+      {{- range $ingress.hosts }}
         - host: {{ .host | quote }}
           http:
               paths:
@@ -58,4 +62,5 @@ spec:
                       {{- end }}
                 {{- end }}
       {{- end }}
-  {{- end }}
+
+{{- end }}

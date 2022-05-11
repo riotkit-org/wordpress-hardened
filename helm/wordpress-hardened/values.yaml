@@ -22,6 +22,8 @@ pv:
 
 
 ingress:
+    enabled: true
+    hosts: ["my-page.org"]
     # className: nginx
     #secretName: ...
     tls:

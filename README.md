@@ -25,7 +25,7 @@ Roadmap
 - [ ] Support for Network Policy templates
 - [ ] Support for Backup Repository template
 - [ ] Support WAF (Web Application Firewall) with [Wordpress-dedicated rules](https://github.com/Rev3rseSecurity/wordpress-modsecurity-ruleset)
-- [ ] Real liveness and readiness checks
+- [x] Real liveness and readiness checks
 - [ ] PHP-FPM chroot (to verify first)
 
 Changing basic auth password or disabling it at all

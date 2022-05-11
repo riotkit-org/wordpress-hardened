@@ -2,10 +2,17 @@ image:
     repository: ghcr.io/riotkit-org/wordpress-hardened
     tag: "" # defaults to {{ .Release.appVersion }}
 
+terminationGracePeriodSeconds: 5
+
 podSecurityContext:
     runAsUser: 65161
     runAsGroup: 65161
     fsGroup: 65161
+podDisruptionBudget:
+    enabled: false
+    spec:
+        minAvailable: 1
+        maxUnavailable: 0
 
 pv:
     wp:
@@ -21,26 +28,34 @@ pv:
         #storageClassName: "..."
 
 
-ingress:
-    enabled: true
-    hosts: ["my-page.org"]
-    # className: nginx
-    #secretName: ...
-    tls:
-        #hosts: ["my-page.org"]
+ingresses: []
+#    - name: wp-https
+#      className: nginx
+#      secretName: wp-tls
+#      annotations:
+#          cert-manager.io/cluster-issuer: letsencrypt-staging
+#      hosts:
+#          - host: example.org
+#            paths:
+#                - path: /
+#                  pathType: ImplementationSpecific
+#      tls:
+#          - hosts: ["example.org"]
 
+# environment variables passed to the container - see Dockerfile and https://github.com/riotkit-org/wordpress-hardened for reference
 env:
     HTTPS: "on"
     WP_PAGE_URL: "https://my-page.org"
+    HEALTH_CHECK_ALLOWED_SUBNET: "10.0.0.0/8"   # type your POD CIDR there or explicit control plane IP address
 
+# allows to embed `kind: Secret`, `kind: SealedSecret`, `kind: ExternalSecret` or any other secret
 secrets:
     name: wordpress-secrets
+    create: true
+
+    apiVersion: v1
+    kind: Secret
     content: |
-        ---
-        apiVersion: v1
-        kind: Secret
-        metadata:
-            name: wordpress-secrets
         stringData:
             AUTH_KEY: change-me
             SECURE_AUTH_KEY: change-me
@@ -68,11 +83,14 @@ health:
     liveness:
         enabled: true
         attributes:
-            failureThreshold: 1
+            failureThreshold: 2
+            periodSeconds: 60
             terminationGracePeriodSeconds: 10
     readiness:
         enabled: true
-        attributes: {}
+        attributes:
+            failureThreshold: 2
+            periodSeconds: 60
 
 service:
     type: ClusterIP

@@ -21,9 +21,12 @@ spec:
                 {{- if eq (.Values.image.tag | default .Chart.AppVersion) "latest" | or (eq (.Values.image.tag | default .Chart.AppVersion) "snapshot") }}
                 refreshImageTag: "{{- randAlphaNum 24 | nospace -}}"
                 {{- end }}
+                {{- with .Values.podLabels }}
+                {{- toYaml . | nindent 16 }}
+                {{- end }}
         spec:
             automountServiceAccountToken: false
-            terminationGracePeriodSeconds: 5
+            terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds | default("5") }}
             {{- with .Values.podSecurityContext }}
             securityContext:
               {{- toYaml . | nindent 14 }}
@@ -73,7 +76,7 @@ spec:
                       {{- toYaml . | nindent 22 }}
                       {{- end}}
                       httpGet:
-                          path: /index.php
+                          path: /liveness.php
                           scheme: HTTP
                           port: http
                   {{- end }}
@@ -83,7 +86,7 @@ spec:
                       {{- toYaml . | nindent 22 }}
                       {{- end }}
                       httpGet:
-                          path: /index.php
+                          path: /readiness.php
                           scheme: HTTP
                           port: http
                   {{- end }}

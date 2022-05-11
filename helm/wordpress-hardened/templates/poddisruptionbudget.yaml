@@ -1,0 +1,12 @@
+{{- if .Values.podDisruptionBudget.enabled }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+    name: {{ include "wordpress-hardened.fullname" . }}
+spec:
+    {{ toYaml .Values.podDisruptionBudget.spec | nindent 4 }}
+    selector:
+        matchLabels:
+            {{- include "wordpress-hardened.selectorLabels" . | nindent 12 }}
+{{- end }}

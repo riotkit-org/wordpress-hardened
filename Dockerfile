@@ -15,7 +15,8 @@ ENV AUTO_UPDATE_CRON="0 5 * * TUE" \
     PHP_ERROR_REPORTING="E_ALL & ~E_DEPRECATED & ~E_STRICT" \
     PHP_POST_MAX_SIZE="32M" \
     PHP_UPLOAD_MAX_FILESIZE="32M" \
-    PHP_MEMORY_LIMIT="128M"
+    PHP_MEMORY_LIMIT="128M" \
+    HEALTH_CHECK_ALLOWED_SUBNET=""
 
 # p2 (jinja2)
 RUN wget https://github.com/wrouesnel/p2cli/releases/download/r13/p2-linux-x86_64 -O /usr/bin/p2 && chmod +x /usr/bin/p2
@@ -38,6 +39,8 @@ RUN apk --update add nginx apache2-utils \
 
 ADD ./wp-config-sample.php /usr/src/wordpress/wp-config-sample.php
 ADD ./wp-config-riotkit.php /usr/src/wordpress/wp-config-riotkit.php
+ADD ./liveness.php /usr/src/wordpress/liveness.php
+ADD ./readiness.php /usr/src/wordpress/readiness.php
 ADD ./container-files /templates
 ADD htpasswd /opt/htpasswd
 

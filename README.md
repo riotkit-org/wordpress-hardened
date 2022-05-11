@@ -21,8 +21,9 @@ Roadmap
 - [x] Replace J2cli with [P2cli](https://github.com/wrouesnel/p2cli)
 - [x] Replace Supervisord with [multirun](https://github.com/nicolas-van/multirun)
 - [x] Non-root container
-- [ ] Helm Chart
+- [x] Helm Chart
 - [ ] Support for Network Policy templates
+- [ ] Support for Backup Repository template
 - [ ] Support WAF (Web Application Firewall) with [Wordpress-dedicated rules](https://github.com/Rev3rseSecurity/wordpress-modsecurity-ruleset)
 - [ ] Real liveness and readiness checks
 - [ ] PHP-FPM chroot (to verify first)

@@ -26,7 +26,7 @@ spec:
                 {{- end }}
         spec:
             automountServiceAccountToken: false
-            terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds | default("5") }}
+            terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds | default "5" }}
             {{- with .Values.podSecurityContext }}
             securityContext:
               {{- toYaml . | nindent 14 }}

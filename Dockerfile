@@ -45,7 +45,7 @@ ADD ./container-files /templates
 ADD htpasswd /opt/htpasswd
 
 # Allow runtime modify of those files by entrypoint, so the container could be rootless
-RUN mkdir -p /var/www/riotkit /var/lib/nginx/tmp/proxy /var/lib/nginx/logs \
+RUN mkdir -p /var/www/riotkit /var/lib/nginx/tmp/proxy /var/lib/nginx/logs /var/nginx \
     && touch /usr/local/etc/php/php.ini /usr/local/sbin/php-fpm.bckp /etc/crontabs/www-data /var/lib/nginx/logs/error.log
 RUN chown -R 65161:65161 \
     /etc/nginx/nginx.conf \
@@ -58,6 +58,7 @@ RUN chown -R 65161:65161 \
     /var/lib/nginx \
     /var/log \
     /var/run \
+    /var/nginx \
     /run
 
 # non-root container does not need root tasks

@@ -45,7 +45,7 @@ ADD ./container-files /templates
 ADD htpasswd /opt/htpasswd
 
 # Allow runtime modify of those files by entrypoint, so the container could be rootless
-RUN mkdir -p /var/www/riotkit /var/lib/nginx/tmp/proxy /var/lib/nginx/logs /var/nginx \
+RUN mkdir -p /var/www/riotkit /var/lib/nginx/tmp/proxy /var/lib/nginx/logs \
     && touch /usr/local/etc/php/php.ini /usr/local/sbin/php-fpm.bckp /etc/crontabs/www-data /var/lib/nginx/logs/error.log
 RUN chown -R 65161:65161 \
     /etc/nginx/nginx.conf \
@@ -58,7 +58,6 @@ RUN chown -R 65161:65161 \
     /var/lib/nginx \
     /var/log \
     /var/run \
-    /var/nginx \
     /run
 
 # non-root container does not need root tasks
@@ -81,7 +80,7 @@ RUN chmod +x /usr/local/bin/entrypoint-riotkit.sh /usr/local/bin/docker-entrypoi
 RUN HEALTH_CHECK_ALLOWED_SUBNET=0.0.0.0/0; \
     DISABLE_DIRECT_CONTENT_PHP_EXECUTION=true; \
     BASIC_AUTH_ENABLED=true; \
-    p2 --template /templates/etc/nginx/nginx.conf > /etc/nginx/nginx.conf && nginx -t
+    p2 --template /templates/etc/nginx/nginx.conf > /etc/nginx/nginx.conf && su www-data -c 'nginx -t'
 
 # high user id number should be more compatible with OpenShift
 USER 65161

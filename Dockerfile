@@ -76,14 +76,14 @@ ADD container-files/entrypoint-riotkit.sh /usr/local/bin/
 ADD container-files/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint-riotkit.sh /usr/local/bin/docker-entrypoint.sh
 
+# high user id number should be more compatible with OpenShift
+USER 65161
+
 # test nginx configuration file
 RUN HEALTH_CHECK_ALLOWED_SUBNET=0.0.0.0/0; \
     DISABLE_DIRECT_CONTENT_PHP_EXECUTION=true; \
     BASIC_AUTH_ENABLED=true; \
-    p2 --template /templates/etc/nginx/nginx.conf > /etc/nginx/nginx.conf && su www-data -c 'nginx -t'
-
-# high user id number should be more compatible with OpenShift
-USER 65161
+    p2 --template /templates/etc/nginx/nginx.conf > /etc/nginx/nginx.conf && nginx -t
 
 WORKDIR "/var/www/riotkit"
 ENTRYPOINT ["/usr/local/bin/entrypoint-riotkit.sh"]

@@ -52,6 +52,29 @@ spec:
                 {{- toYaml . | nindent 14 }}
             {{- end }}
             containers:
+                {{- if .Values.waf.enabled }}
+                - name: waf-proxy
+                  image: {{ .Values.waf.image.repository }}:{{ .Values.waf.image.tag }}
+                  env:
+                      - name: CADDY_PORT
+                        value: 8090
+
+                      {{- range $num, $ingress := $.Values.ingresses }}
+                      {{- range $ingress.hosts }}
+                      - name: UPSTREAM_1
+                        value: |
+                            {"pass_to": "127.0.0.1:8080", "hostname": "{{ . }}"}
+                      {{- end }}
+                      {{- end }}
+
+                      {{- with .Values.waf.env }}
+                      {{- range $key, $value := . }}
+                      - name: {{ $key }}
+                        value: "{{ $value }}"
+                      {{- end }}
+                      {{- end }}
+                {{- end }}
+
                 - name: app
                   image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
                   imagePullPolicy: Always
@@ -72,8 +95,10 @@ spec:
                       - name: wp
                         mountPath: /var/www/riotkit
                       {{- end }}
+                      {{- if .Values.pv.wp_content.enabled }}
                       - name: wp-content
                         mountPath: /var/www/riotkit/wp-content
+                      {{- end }}
                   ports:
                       - name: http
                         containerPort: 8080
@@ -106,6 +131,8 @@ spec:
                   persistentVolumeClaim:
                       claimName: {{ .Values.pv.wp.claimName }}
                 {{- end }}
+                {{- if .Values.pv.wp_content.enabled }}
                 - name: wp-content
                   persistentVolumeClaim:
                       claimName: {{ .Values.pv.wp_content.claimName }}
+                {{- end }}

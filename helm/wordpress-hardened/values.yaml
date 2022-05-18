@@ -27,7 +27,11 @@ pv:
         claimName: wp
         size: 256Mi
         #storageClassName: "..."
+
+    # [!!!] Disabling persistence on wp-content may be dangerous, better know what you are doing
+    #       Advanced usage: Store everything in S3 instead of in wp-content, then disable persistent volume and make WordPress a bit more stateless
     wp_content:
+        enabled: true
         claimName: wp-content
         create: true
         size: 1Gi
@@ -101,3 +105,25 @@ health:
 service:
     type: ClusterIP
     port: 8080
+
+# =====================================================================
+# Web Application Firewall - protects your WP instance against attacks
+# Requires Ingress to be created.
+# =====================================================================
+waf:
+    enabled: true
+    image:
+        repository: ghcr.io/riotkit-org/waf-proxy
+        tag: 2.5.0-coraza-v1.2.0-bv0.0.8
+    env:
+        ENABLE_RULE_WORDPRESS: true
+        WP_CLIENT_IP: x-forwarded-for
+        WP_ENABLE_BRUTEFORCE_MITIGATION: true
+        WP_BRUTEFORCE_TIMESPAN: 300
+        WP_BRUTEFORCE_THRESHOLD: 5
+        WP_BRUTEFORCE_BAN_PERIOD: 300
+        WP_ENABLE_XMLRPC: true
+        WP_ENABLE_USER_ENUMERATION: false
+        WP_ENABLE_DOS_PROTECTION: true
+        WP_HARDENED: true
+        ENABLE_CRS: true

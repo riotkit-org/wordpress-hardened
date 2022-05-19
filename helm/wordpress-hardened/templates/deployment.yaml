@@ -57,7 +57,7 @@ spec:
                   image: {{ .Values.waf.image.repository }}:{{ .Values.waf.image.tag }}
                   env:
                       - name: CADDY_PORT
-                        value: 8090
+                        value: "8090"
 
                       {{- range $num, $ingress := $.Values.ingresses }}
                       {{- range $ingress.hosts }}

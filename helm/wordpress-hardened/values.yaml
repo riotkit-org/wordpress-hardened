@@ -114,7 +114,7 @@ waf:
     enabled: true
     image:
         repository: ghcr.io/riotkit-org/waf-proxy
-        tag: 2.5.0-coraza-v1.2.0-bv0.0.8
+        tag: 2.5.1-coraza-v1.2.0-bv0.0.10
     env:
         ENABLE_RULE_WORDPRESS: true
         WP_CLIENT_IP: x-forwarded-for

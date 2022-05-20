@@ -63,7 +63,7 @@ spec:
                       {{- range $ingress.hosts }}
                       - name: UPSTREAM_1
                         value: |
-                            {"pass_to": "127.0.0.1:8080", "hostname": "{{ . }}"}
+                            {"pass_to": "http://127.0.0.1:8080", "hostname": "{{ . }}"}
                       {{- end }}
                       {{- end }}
 
@@ -73,6 +73,11 @@ spec:
                         value: "{{ $value }}"
                       {{- end }}
                       {{- end }}
+
+                  ports:
+                      - name: http-waf
+                        containerPort: 8090
+                        protocol: TCP
                 {{- end }}
 
                 - name: app

@@ -8,8 +8,8 @@ metadata:
 spec:
     type: {{ .Values.service.type }}
     ports:
-        - port: {{ if .Values.waf.enabled }}8090{{ else }}8080{{ end }}
-          targetPort: http
+        - port: 8080
+          targetPort: {{ if .Values.waf.enabled }}http-waf{{ else }}http{{ end }}
           protocol: TCP
           name: http
     selector:

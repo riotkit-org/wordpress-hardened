@@ -1,6 +1,10 @@
 <?php declare(strict_types=1);
 
-if (is_file('wp-admin/install.php')) {
+// do not allow redirects to https to avoid 'http: server gave HTTP response to HTTPS client' in Kubernetes
+$_SERVER['HTTPS'] = 'off';
+$_ENV['HTTPS']    = 'off';
+
+if (is_file(__DIR__ . '/wp-admin/install.php')) {
     echo "OK, but requires installation";
     exit(0);
 }

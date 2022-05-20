@@ -55,6 +55,7 @@ spec:
                 {{- if .Values.waf.enabled }}
                 - name: waf-proxy
                   image: {{ .Values.waf.image.repository }}:{{ .Values.waf.image.tag }}
+                  imagePullPolicy: Always
                   env:
                       - name: CADDY_PORT
                         value: "8090"

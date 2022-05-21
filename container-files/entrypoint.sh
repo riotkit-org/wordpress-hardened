@@ -7,7 +7,7 @@ gid="$(id -g)"
 echo " >> UID=${uid}, GID=${gid}"
 
 if ([ ! -e index.php ] && [ ! -e wp-includes/version.php ]) || [[ "${FORCE_UPGRADE}" == "true" ]]; then
-        args=("--exclude" "readme.html" "--exclude" "*.txt")
+        args=( "--exclude" "readme.html" "--exclude" "*.txt" )
 
         echo >&2 "WordPress not found in $PWD - copying now..."
         if [ -n "$(find -mindepth 1 -maxdepth 1 -not -name wp-content)" ]; then
@@ -15,10 +15,10 @@ if ([ ! -e index.php ] && [ ! -e wp-includes/version.php ]) || [[ "${FORCE_UPGRA
         fi
 
         if [[ -d /var/www/riotkit/wp-content ]]; then
-            args+=(" --exclude" "wp-content")
+            args+=( "--exclude" "wp-content" )
         fi
 
-        rsync -av "${args[@]}" /usr/src/wordpress/* /var/www/riotkit
+        rsync -av /usr/src/wordpress/* /var/www/riotkit "${args[@]}"
         echo >&2 "Complete! WordPress has been successfully copied to $PWD"
 fi
 

@@ -127,3 +127,11 @@ waf:
         WP_ENABLE_DOS_PROTECTION: true
         WP_HARDENED: true
         ENABLE_CRS: true
+
+    health:
+        liveness:
+            enabled: true
+            attributes:
+                failureThreshold: 2
+                periodSeconds: 60
+                terminationGracePeriodSeconds: 10

@@ -1,5 +1,8 @@
 <?php declare(strict_types=1);
 
+// todo
+exit(0);
+
 // do not allow redirects to https to avoid 'http: server gave HTTP response to HTTPS client' in Kubernetes
 $_SERVER['HTTPS'] = 'off';
 $_ENV['HTTPS']    = 'off';

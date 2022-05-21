@@ -8,9 +8,50 @@ metadata:
 spec:
     type: {{ .Values.service.type }}
     ports:
-        - port: 8080
-          targetPort: {{ if .Values.waf.enabled }}http-waf{{ else }}http{{ end }}
+        - port: 80
+          targetPort: http
           protocol: TCP
           name: http
     selector:
         {{- include "wordpress-hardened.selectorLabels" . | nindent 8 }}
+
+{{- if .Values.waf.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: {{ include "wordpress-hardened.fullname" . }}-waf-protected
+    labels:
+      {{- include "wordpress-hardened.labels" . | nindent 8 }}
+spec:
+    type: {{ .Values.service.type }}
+    ports:
+        - port: 80
+          targetPort: http-waf
+          protocol: TCP
+          name: http
+
+        - port: 8081
+          targetPort: waf-healthcheck
+          protocol: TCP
+          name: waf-healthcheck
+    selector:
+      {{- include "wordpress-hardened.selectorLabels" . | nindent 8 }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: {{ include "wordpress-hardened.fullname" . }}-waf-metrics
+    labels:
+        {{- include "wordpress-hardened.labels" . | nindent 8 }}
+spec:
+    type: {{ .Values.service.type }}
+    ports:
+        - port: 2019
+          targetPort: waf-metrics
+          protocol: TCP
+          name: waf-metrics
+    selector:
+      {{- include "wordpress-hardened.selectorLabels" . | nindent 8 }}
+{{- end }}

@@ -53,12 +53,12 @@ spec:
                     backend:
                       {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
                         service:
-                            name: {{ $fullName }}
+                            name: {{ if $.Values.waf.enabled }}{{ $fullName }}-waf-protected{{ else }}{ $fullName }}{{ end }}
                             port:
-                                number: 8080
+                                number: 80
                       {{- else }}
-                        serviceName: {{ $fullName }}
-                        servicePort: 8080
+                        serviceName: {{ if $.Values.waf.enabled }}{{ $fullName }}-waf-protected{{ else }}{ $fullName }}{{ end }}
+                        servicePort: 80
                       {{- end }}
                 {{- end }}
       {{- end }}

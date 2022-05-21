@@ -62,9 +62,8 @@ spec:
 
                       {{- range $num, $ingress := $.Values.ingresses }}
                       {{- range $ingress.hosts }}
-                      - name: UPSTREAM_1
-                        value: |
-                            {"pass_to": "http://127.0.0.1:8080", "hostname": "{{ . }}"}
+                      - name: UPSTREAM_{{ $num }}
+                        value: '{"pass_to": "http://127.0.0.1:8080", "hostname": "{{ .host }}"}'
                       {{- end }}
                       {{- end }}
 
@@ -79,6 +78,25 @@ spec:
                       - name: http-waf
                         containerPort: 8090
                         protocol: TCP
+
+                      - name: waf-metrics
+                        containerPort: 2019
+                        protocol: TCP
+
+                      - name: waf-healthcheck
+                        containerPort: 8081
+                        protocol: TCP
+
+                  {{- if .Values.waf.health.liveness.enabled }}
+                  livenessProbe:
+                      {{- with .Values.waf.health.liveness.attributes}}
+                      {{- toYaml . | nindent 22 }}
+                      {{- end}}
+                      httpGet:
+                          path: /
+                          scheme: HTTP
+                          port: waf-healthcheck
+                  {{- end }}
                 {{- end }}
 
                 - name: app

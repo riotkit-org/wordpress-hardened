@@ -16,7 +16,8 @@ ENV AUTO_UPDATE_CRON="0 5 * * TUE" \
     PHP_POST_MAX_SIZE="32M" \
     PHP_UPLOAD_MAX_FILESIZE="32M" \
     PHP_MEMORY_LIMIT="128M" \
-    HEALTH_CHECK_ALLOWED_SUBNET=""
+    HEALTH_CHECK_ALLOWED_SUBNET="" \
+    FORCE_UPGRADE=false
 
 # p2 (jinja2)
 RUN wget https://github.com/wrouesnel/p2cli/releases/download/r13/p2-linux-x86_64 -O /usr/bin/p2 && chmod +x /usr/bin/p2
@@ -29,7 +30,7 @@ RUN wget https://github.com/nicolas-van/multirun/releases/download/1.1.3/multiru
     && mv multir* /usr/bin/multirun \
     && chmod +x /usr/bin/multirun
 
-RUN apk --update add nginx apache2-utils \
+RUN apk --update add nginx apache2-utils rsync \
     && curl "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar" --output /usr/bin/wp \
     && mkdir -p /var/tmp/nginx/ /var/lib/nginx/tmp/ \
     && chown www-data:www-data /var/tmp/nginx/ /var/lib/nginx/tmp/ -R \

@@ -3,45 +3,22 @@ set -Eeuo pipefail
 
 uid="$(id -u)"
 gid="$(id -g)"
-user="www-data"
-group="www-data"
 
 echo " >> UID=${uid}, GID=${gid}"
 
-if [ ! -e index.php ] && [ ! -e wp-includes/version.php ]; then
+if ([ ! -e index.php ] && [ ! -e wp-includes/version.php ]) || [[ "${FORCE_UPGRADE}" == "true" ]]; then
+        args=("--exclude" "readme.html" "--exclude" "*.txt")
+
         echo >&2 "WordPress not found in $PWD - copying now..."
         if [ -n "$(find -mindepth 1 -maxdepth 1 -not -name wp-content)" ]; then
                 echo >&2 "WARNING: $PWD is not empty! (copying anyhow)"
         fi
 
-        sourceTarArgs=(
-                --create
-                --file -
-                --directory /usr/src/wordpress
-                --owner "$user" --group "$group"
-        )
-        targetTarArgs=(
-                --extract
-                --no-overwrite-dir
-                --file -
-        )
-        # loop over "pluggable" content in the source, and if it already exists in the destination, skip it
-        # https://github.com/docker-library/wordpress/issues/506 ("wp-content" persisted, "akismet" updated, WordPress container restarted/recreated, "akismet" downgraded)
-        for contentPath in \
-                /usr/src/wordpress/.htaccess \
-                /usr/src/wordpress/wp-content/*/*/ \
-        ; do
-                contentPath="${contentPath%/}"
-                [ -e "$contentPath" ] || continue
-                contentPath="${contentPath#/usr/src/wordpress/}" # "wp-content/plugins/akismet", etc.
-                if [ -e "$PWD/$contentPath" ]; then
-                        echo >&2 "WARNING: '$PWD/$contentPath' exists! (not copying the WordPress version)"
-                        sourceTarArgs+=( --exclude "./$contentPath" )
-                fi
-        done
+        if [[ -d /var/www/riotkit/wp-content ]]; then
+            args+=(" --exclude" "wp-content")
+        fi
 
-        echo " >> Extracting to $(pwd)"
-        tar "${sourceTarArgs[@]}" . | tar "${targetTarArgs[@]}"
+        rsync -av "${args[@]}" /usr/src/wordpress/* /var/www/riotkit
         echo >&2 "Complete! WordPress has been successfully copied to $PWD"
 fi
 
@@ -63,11 +40,6 @@ if [ ! -s wp-config.php ] && [ "${#wpEnvs[@]}" -gt 0 ]; then
                                 }
                                 { print }
                         ' "$wpConfigDocker" > wp-config.php
-                        if [ "$uid" = '0' ]; then
-                                # attempt to ensure that wp-config.php is owned by the run user
-                                # could be on a filesystem that doesn't allow chown (like some NFS setups)
-                                chown "$user:$group" wp-config.php || true
-                        fi
                         break
                 fi
         done

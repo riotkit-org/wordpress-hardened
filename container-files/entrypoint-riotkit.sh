@@ -47,4 +47,11 @@ setupBasicAuth
 setupConfiguration
 setupWP
 
+# Allows to pass own CMD
+# Also allows to execute tests on the container
+if [[ "${1}" == "exec" ]] || [[ "${1}" == "sh" ]] || [[ "${1}" == "bash" ]] || [[ "${1}" == "/bin/sh" ]] || [[ "${1}" == "/bin/bash" ]] ; then
+    echo " >> Running ${@}"
+    exec "$@"
+fi
+
 exec multirun "php-fpm" "nginx -c /etc/nginx/nginx.conf" "crond -f -d 6"

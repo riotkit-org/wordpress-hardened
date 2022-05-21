@@ -51,8 +51,11 @@ jobs:
               with:
                   context: .
                   push: ${{ github.event_name != 'pull_request' }}
-                  tags: ${{ steps.meta.outputs.tags }}
+                  tags: ${{ steps.meta.outputs.tags }},ghcr.io/riotkit-org/wordpress-hardened:dev
                   labels: ${{ steps.meta.outputs.labels }}
+
+            - name: Test image
+              run: make test IMAGE=ghcr.io/riotkit-org/wordpress-hardened:dev
 
     release-chart:
         runs-on: ubuntu-20.04

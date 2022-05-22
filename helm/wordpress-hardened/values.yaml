@@ -114,20 +114,23 @@ waf:
     enabled: true
     image:
         repository: ghcr.io/riotkit-org/waf-proxy
-        tag: 2.5.1-coraza-v1.2.0-bv0.0.10
+        tag: snapshot
     env:
         ENABLE_RULE_WORDPRESS: true
-        WP_CLIENT_IP: x-forwarded-for
-        WP_ENABLE_BRUTEFORCE_MITIGATION: true
-        WP_BRUTEFORCE_TIMESPAN: 300
-        WP_BRUTEFORCE_THRESHOLD: 5
-        WP_BRUTEFORCE_BAN_PERIOD: 300
-        WP_ENABLE_XMLRPC: true
-        WP_ENABLE_USER_ENUMERATION: false
-        WP_ENABLE_DOS_PROTECTION: true
-        WP_HARDENED: true
         ENABLE_CRS: true
+        ENABLE_RATE_LIMITER: true
+        RATE_LIMIT_EVENTS: "30"
+        RATE_LIMIT_WINDOW: "5s"
 
+        # due to bug temporarily the CORAZA WAF is disabled, it will be enabled by default in future releases
+        ENABLE_CORAZA_WAF: false
+
+    directives: |
+        #SecDefaultAction "phase:4,allow,log"
+        #SecAction "id:1,pass,log"
+        #SecAuditLog /dev/stdout
+        #SecDebugLog /dev/stdout
+        #SecDebugLogLevel 5
     health:
         liveness:
             enabled: true

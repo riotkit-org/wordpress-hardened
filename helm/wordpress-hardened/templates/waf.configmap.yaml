@@ -1,0 +1,10 @@
+{{- if .Values.waf.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: {{ include "wordpress-hardened.fullname" . }}-waf-custom-config
+data:
+    custom.conf: |
+        {{ .Values.waf.directives }}
+{{- end }}

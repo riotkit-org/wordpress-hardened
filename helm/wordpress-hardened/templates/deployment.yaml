@@ -74,6 +74,12 @@ spec:
                       {{- end }}
                       {{- end }}
 
+                  volumeMounts:
+                      # allows to add extra directives
+                      - name: waf-custom-config
+                        mountPath: /etc/caddy/rules/custom.conf
+                        subPath: custom.conf
+
                   ports:
                       - name: http-waf
                         containerPort: 8090
@@ -147,6 +153,13 @@ spec:
                           scheme: HTTP
                           port: http
                   {{- end }}
+                  startupProbe:
+                      httpGet:
+                          path: /liveness.php
+                          scheme: HTTP
+                          port: http
+                      failureThreshold: 10
+                      periodSeconds: 5
                   resources:
                       {{- toYaml .Values.resources | nindent 20 }}
             volumes:
@@ -160,3 +173,8 @@ spec:
                   persistentVolumeClaim:
                       claimName: {{ .Values.pv.wp_content.claimName }}
                 {{- end }}
+              {{- if .Values.waf.enabled }}
+                - name: waf-custom-config
+                  configMap:
+                      name: {{ include "wordpress-hardened.fullname" . }}-waf-custom-config
+              {{- end }}

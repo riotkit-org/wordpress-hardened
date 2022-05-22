@@ -13,6 +13,8 @@ Hardened version of official Wordpress container, with special support for Kuber
 - Non-root container
 - Free from Supervisord, using lightweight [multirun](https://github.com/nicolas-van/multirun) instead
 - Runtime NGINX and PHP configuration to adjust things like `memory_limit`, `error_reporting` or `post_max_size`
+- Preconfiguration of admin account, website name and list of installed plugins
+- Possible to upgrade Wordpress together with docker container
 
 Roadmap
 -------
@@ -77,6 +79,7 @@ services:
             AUTO_UPDATE_CRON: "0 5 * * SAT"
             XMLRPC_DISABLED: "true"
             DISABLE_DIRECT_CONTENT_PHP_EXECUTION: "false"
+            ENABLED_PLUGINS: "amazon-s3-and-cloudfront"
           
             # basic auth on administrative endpoints
             BASIC_AUTH_ENABLED: "true"
@@ -89,6 +92,64 @@ services:
             # multiple domains can be pointing at this container
             VIRTUAL_HOST: "zsp.net.pl,www.zsp.net.pl,wroclaw.zsp.net.pl,wwww.wroclaw.zsp.net.pl"
 
+```
+
+Automating installation
+-----------------------
+
+You can skip installation wizard by installing WordPress on container startup.
+This container uses `wp-cli` to install WordPress and plugins allowing you to prepare a fully automated website.
+
+**Example configuration:**
+```yaml
+WP_PREINSTALL: true
+WP_SITE_URL: example.org
+WP_SITE_ADMIN_LOGIN: admin
+WP_SITE_ADMIN_PASSWORD: riotkit
+WP_SITE_ADMIN_EMAIL: example@example.org
+
+# NOTICE: The plugins will be installed right after WordPress installation is finished, 
+#         this means that when `WP_PREINSTALL=false`, then the entrypoint will wait for user 
+#         to complete the installation wizard, then the plugins will be installed
+ENABLED_PLUGINS: "amazon-s3-and-cloudfront,classic-editor"
+```
+
+**Example log:**
+
+```bash
+ >> Checking if autoupdate should be scheduled... [scheduling at '0 5 * * TUE']
+ >> Writing to basic auth file - /opt/htpasswd
+Adding password for user riotkit
+ >> Rendering configuration files...
+ >> Installing Wordpress
+ >> UID=65161, GID=65161
+WordPress not found in /var/www/riotkit - copying now...
+sending incremental file list
+index.php
+liveness.php
+readiness.php
+...
+wp-includes/widgets/class-wp-widget-text.php
+
+sent 58,545,704 bytes  received 54,312 bytes  39,066,677.33 bytes/sec
+total size is 58,341,389  speedup is 1.00
+Complete! WordPress has been successfully copied to /var/www/riotkit
+No 'wp-config.php' found in /var/www/riotkit, but 'WORDPRESS_...' variables supplied; copying 'wp-config-docker.php' (WORDPRESS_DB_HOST WORDPRESS_DB_NAME WORDPRESS_DB_PASSWORD WORDPRESS_DB_USER)
+Success: WordPress installed successfully.
+ >> Installing plugin 'amazon-s3-and-cloudfront'
+Installing WP Offload Media Lite for Amazon S3, DigitalOcean Spaces, and Google Cloud Storage (2.6.2)
+Downloading installation package from https://downloads.wordpress.org/plugin/amazon-s3-and-cloudfront.2.6.2.zip...
+Unpacking the package...
+Installing the plugin...
+Plugin installed successfully.
+Success: Installed 1 of 1 plugins.
+ >> Installing plugin 'classic-editor'
+Installing Classic Editor (1.6.2)
+Downloading installation package from https://downloads.wordpress.org/plugin/classic-editor.1.6.2.zip...
+Unpacking the package...
+Installing the plugin...
+Plugin installed successfully.
+Success: Installed 1 of 1 plugins.
 ```
 
 From authors

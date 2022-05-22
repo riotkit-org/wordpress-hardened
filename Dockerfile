@@ -17,7 +17,13 @@ ENV AUTO_UPDATE_CRON="0 5 * * TUE" \
     PHP_UPLOAD_MAX_FILESIZE="32M" \
     PHP_MEMORY_LIMIT="128M" \
     HEALTH_CHECK_ALLOWED_SUBNET="" \
-    FORCE_UPGRADE=false
+    FORCE_UPGRADE=false \
+    ENABLED_PLUGINS="" \
+    WP_PREINSTALL=false \
+    WP_SITE_URL=example.org \
+    WP_SITE_ADMIN_LOGIN=admin \
+    WP_SITE_ADMIN_PASSWORD=riotkit \
+    WP_SITE_ADMIN_EMAIL=example@example.org
 
 # p2 (jinja2)
 RUN wget https://github.com/wrouesnel/p2cli/releases/download/r13/p2-linux-x86_64 -O /usr/bin/p2 && chmod +x /usr/bin/p2
@@ -73,7 +79,8 @@ RUN cat /etc/group | grep -v "www-data" > /etc/group.tmp \
 # add entrypoints
 ADD container-files/entrypoint-riotkit.sh /usr/local/bin/
 ADD container-files/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint-riotkit.sh /usr/local/bin/docker-entrypoint.sh
+ADD container-files/install-plugins-first-time.sh /usr/local/bin/install-plugins-first-time.sh
+RUN chmod +x /usr/local/bin/entrypoint-riotkit.sh /usr/local/bin/docker-entrypoint.sh /usr/local/bin/install-plugins-first-time.sh
 
 # high user id number should be more compatible with OpenShift
 USER 65161

@@ -3,18 +3,15 @@
 set -eo pipefail
 
 setupWP() {
-    # Warning: HACK below :)
-    # mock php-fpm to not start it immediately by WordPress entrypoint
-    echo " >> Mock php-fpm"
-    mv /usr/local/sbin/php-fpm /usr/local/sbin/php-fpm.bckp
-    ln -s /bin/bash /usr/local/sbin/php-fpm
-
     echo " >> Installing Wordpress"
-    /usr/local/bin/docker-entrypoint.sh php-fpm || exit 1
+    /usr/local/bin/docker-entrypoint.sh || exit 1
+}
 
-    echo " >> Cleaning up the mock"
-    rm /usr/local/sbin/php-fpm
-    mv /usr/local/sbin/php-fpm.bckp /usr/local/sbin/php-fpm
+preinstallWP() {
+    if [[ "${WP_PREINSTALL}" == "true" ]]; then
+        wp core install --url=${WP_SITE_URL} --title=${WP_SITE_TITLE} --admin_user=${WP_SITE_ADMIN_LOGIN} --admin_password=${WP_SITE_ADMIN_PASSWORD} --admin_email=${WP_SITE_ADMIN_EMAIL}
+        /usr/local/bin/install-plugins-first-time.sh no-wait
+    fi
 }
 
 scheduleAutoupdate() {
@@ -46,6 +43,7 @@ scheduleAutoupdate
 setupBasicAuth
 setupConfiguration
 setupWP
+preinstallWP
 
 # Allows to pass own CMD
 # Also allows to execute tests on the container
@@ -54,4 +52,4 @@ if [[ "${1}" == "exec" ]] || [[ "${1}" == "sh" ]] || [[ "${1}" == "bash" ]] || [
     exec "$@"
 fi
 
-exec multirun "php-fpm" "nginx -c /etc/nginx/nginx.conf" "crond -f -d 6"
+exec multirun "php-fpm" "nginx -c /etc/nginx/nginx.conf" "crond -f -d 6" "/usr/local/bin/install-plugins-first-time.sh"

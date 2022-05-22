@@ -24,7 +24,7 @@ Roadmap
 - [x] Replace Supervisord with [multirun](https://github.com/nicolas-van/multirun)
 - [x] Non-root container
 - [x] Helm Chart
-- [ ] Plugins management - container installs selected plugins right after start or before starting
+- [x] Plugins management - container installs selected plugins right after start or before starting
 - [ ] Support for Network Policy templates
 - [ ] Support for Backup Repository template
 - [ ] Support WAF (Web Application Firewall) with [Wordpress-dedicated rules](https://github.com/Rev3rseSecurity/wordpress-modsecurity-ruleset)

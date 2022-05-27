@@ -35,9 +35,7 @@ spec:
             {{- range .hosts }}
               - {{ . | quote }}
             {{- end }}
-          {{- if .secretName }}
-          secretName: {{ .secretName }}
-          {{- end }}
+          secretName: {{ .secretName | default $fullName }}
       {{- end }}
   {{- end }}
     rules:

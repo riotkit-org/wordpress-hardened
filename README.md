@@ -15,6 +15,7 @@ Hardened version of official Wordpress container, with special support for Kuber
 - Runtime NGINX and PHP configuration to adjust things like `memory_limit`, `error_reporting` or `post_max_size`
 - Preconfiguration of admin account, website name and list of installed plugins
 - Possible to upgrade Wordpress together with docker container
+- Integration with [Backup Repository](https://github.com/riotkit-org/backup-repository)
 
 Roadmap
 -------

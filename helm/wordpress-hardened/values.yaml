@@ -41,7 +41,6 @@ pv:
 ingresses: []
 #    - name: wp-https
 #      className: nginx
-#      secretName: wp-tls
 #      annotations:
 #          cert-manager.io/cluster-issuer: letsencrypt-staging
 #      hosts:
@@ -51,6 +50,7 @@ ingresses: []
 #                  pathType: ImplementationSpecific
 #      tls:
 #          - hosts: ["example.org"]
+#            secretName: wp-tls
 
 # environment variables passed to the container - see Dockerfile and https://github.com/riotkit-org/wordpress-hardened for reference
 env:
@@ -138,3 +138,36 @@ waf:
                 failureThreshold: 2
                 periodSeconds: 60
                 terminationGracePeriodSeconds: 10
+
+# =====================================================================
+# Backup Repository integration
+#
+# Docs:
+#   - Client: https://github.com/riotkit-org/br-backup-maker
+#   - Server: https://github.com/riotkit-org/backup-repository
+# =====================================================================
+backups:
+    enabled: false
+    schedule: "16 1 * * *" # 01:16 in the night
+    image:
+        repository: ghcr.io/riotkit-org/backup-maker
+        tag: snapshot
+    env:
+        BACKUP_SERVER_URL: "https://backups.example.org"
+        BACKUP_COLLECTION_ID: "111-222-333-444"
+    secrets:
+        create: true
+        apiVersion: v1
+        kind: Secret
+        name: wp-backup
+        content: |
+            stringData:
+                BACKUP_TOKEN: "..."  # JWT token here
+                BACKUP_GPG_PASSPHRASE: "..."
+                BACKUP_GPG_PRIVATE_KEY_CONTENT: |
+                    -----BEGIN PGP PRIVATE KEY BLOCK-----
+                    ...
+                    -----END PGP PRIVATE KEY BLOCK-----
+            
+                # NOTICE: This must match your GPG key owner
+                BACKUP_GPG_RECIPIENT: "example@example.org"

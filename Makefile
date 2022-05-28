@@ -18,5 +18,5 @@ test_installs_plugins:
 
 	# MariaDB (dependency)
 	docker run --rm -d --name wph-test-mariadb -e MARIADB_ROOT_PASSWORD=riotkit -e MARIADB_PASSWORD=riotkit -e MARIADB_USER=wp -e MARIADB_DATABASE=wp --network wph-test --network-alias mariadb.db.svc.cluster.local mariadb:10.7.3 && sleep 15
-	docker run --rm --name wp-riotkit -e WP_PREINSTALL=true -e WORDPRESS_DB_HOST=mariadb.db.svc.cluster.local -e WORDPRESS_DB_PASSWORD=riotkit -e WORDPRESS_DB_USER=root -e WORDPRESS_DB_NAME=wp -e ENABLED_PLUGINS="amazon-s3-and-cloudfront,classic-editor" --network wph-test ${IMAGE} /bin/bash -c "/bin/true"
+	docker run --rm --name wp-riotkit -e WP_PREINSTALL=true -e WORDPRESS_DB_HOST=mariadb.db.svc.cluster.local -e WORDPRESS_DB_PASSWORD=riotkit -e WORDPRESS_DB_USER=root -e WORDPRESS_DB_NAME=wp -e ENABLED_PLUGINS="amazon-s3-and-cloudfront,classic-editor" --network wph-test ${IMAGE} /bin/bash -c "find /var/www/riotkit/wp-content 2>&1 |grep amazon-s3-and-cloudfront"
 	docker rm -f wph-test-mariadb || true

@@ -27,7 +27,7 @@ Roadmap
 - [x] Helm Chart
 - [x] Plugins management - container installs selected plugins right after start or before starting
 - [ ] Support for Network Policy templates
-- [ ] Support for Backup Repository template
+- [x] Support for Backup Repository template
 - [ ] Support WAF (Web Application Firewall) with [Wordpress-dedicated rules](https://github.com/Rev3rseSecurity/wordpress-modsecurity-ruleset)
 - [x] Real liveness and readiness checks
 - [ ] PHP-FPM chroot (to verify first)
@@ -151,6 +151,61 @@ Unpacking the package...
 Installing the plugin...
 Plugin installed successfully.
 Success: Installed 1 of 1 plugins.
+```
+
+Keeping wp-content and themes in GIT repository (Kubernetes only)
+-----------------------------------------------------------------
+
+[git-clone-operator](https://github.com/riotkit-org/git-clone-operator) is a Kubernetes operator that allows to clone a GIT repository before a Pod is launched, can be used to automatically fetch your website theme within just few seconds before Pod starts.
+
+Use and adjust following Helm values to clone your WordPress theme from a GIT repository before the application will start up.
+
+**values.yaml**
+
+```yaml
+# ----------------------------------------------------------
+# theme
+# ----------------------------------------------------------
+podLabels:
+    riotkit.org/git-clone-operator: "true"
+podAnnotations:
+    git-clone-operator/revision: main
+    git-clone-operator/url: "https://git.example.org/my-example/my-theme.git"
+    git-clone-operator/path: /var/www/riotkit/wp-content/themes/my-theme
+    git-clone-operator/secretName: my-secret-name
+    git-clone-operator/secretTokenKey: gitToken
+    git-clone-operator/owner: "65161"
+    git-clone-operator/group: "65161"
+```
+
+Backup with Backup Repository (Kubernetes only)
+-----------------------------------------------
+
+Automatically taking a snapshot of database + files using a CronJob can be configured within Helm Values. Requires to have a [Backup Repository](https://github.com/riotkit-org/backup-repository) instance installed inside the cluster or outside the cluster.
+
+**values.yaml**
+
+```yaml
+backups:
+    enabled: true
+    schedule: "16 1 * * *"
+    env:
+        BACKUP_SERVER_URL: "http://my-backup-instance.backups.svc.cluster.local:8080"
+        BACKUP_COLLECTION_ID: "my-collection-name"
+    secrets:
+        create: true
+        name: my-wp-backup-client-secrets
+        content: |
+            stringData:
+                BACKUP_TOKEN: "my-authorization-token-that-allows-to-upload-to-backup-repository-api-server-to-selected-collection-id"  # JWT token here
+                BACKUP_GPG_PASSPHRASE: "my-long-passphrase"
+                BACKUP_GPG_RECIPIENT: "example@example.org" # NOTICE: This must match your GPG key owner
+                BACKUP_GPG_PRIVATE_KEY_CONTENT: |
+                    -----BEGIN PGP PRIVATE KEY BLOCK-----
+
+                    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    -----END PGP PRIVATE KEY BLOCK-----
+
 ```
 
 From authors

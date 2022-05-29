@@ -14,7 +14,7 @@ if ([ ! -e index.php ] && [ ! -e wp-includes/version.php ]) || [[ "${FORCE_UPGRA
                 echo >&2 "WARNING: $PWD is not empty! (copying anyhow)"
         fi
 
-        if [[ -d /var/www/riotkit/wp-content ]]; then
+        if [[ ! -z "$(ls -A /var/www/riotkit/wp-content)" ]]; then
             args+=( "--exclude" "wp-content" )
         fi
 

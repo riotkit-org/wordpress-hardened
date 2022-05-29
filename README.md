@@ -16,6 +16,8 @@ Hardened version of official Wordpress container, with special support for Kuber
 - Preconfiguration of admin account, website name and list of installed plugins
 - Possible to upgrade Wordpress together with docker container
 - Integration with [Backup Repository](https://github.com/riotkit-org/backup-repository)
+- Web Application Firewall and OWASP CRS support (experimental)
+- Built-in primitive rules to block common exploits targeting PHP
 
 Roadmap
 -------
@@ -28,7 +30,7 @@ Roadmap
 - [x] Plugins management - container installs selected plugins right after start or before starting
 - [ ] Support for Network Policy templates
 - [x] Support for Backup Repository template
-- [ ] Support WAF (Web Application Firewall) with [Wordpress-dedicated rules](https://github.com/Rev3rseSecurity/wordpress-modsecurity-ruleset)
+- [ ] Support WAF (Web Application Firewall) with [OWASP CRS](https://owasp.org/www-project-modsecurity-core-rule-set/)
 - [x] Real liveness and readiness checks
 - [ ] PHP-FPM chroot (to verify first)
 

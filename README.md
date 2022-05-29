@@ -232,6 +232,25 @@ waf:
         #DEBUG: true
 ```
 
+Access log and error log
+------------------------
+
+Point access and error logs to files, to stdout/stderr or disable logging by using environment variables.
+
+```bash
+ACCESS_LOG: /dev/stdout
+ERROR_LOG: /dev/stderr
+```
+
+```bash
+ACCESS_LOG: /mnt/logs/access.log
+ERROR_LOG: /mnt/logs/error.log
+```
+
+```bash
+ACCESS_LOG: off
+ERROR_LOG: off
+```
 
 From authors
 ------------

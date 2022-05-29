@@ -208,6 +208,31 @@ backups:
 
 ```
 
+Enabling WAF protection (Kubernetes only)
+-----------------------------------------
+
+> :warning: This is experimental and may not work yet.
+
+Use following values to enable Web Application Firewall rules to protect your WordPress instance against various forms of attacks.
+
+_Learn more about Web Application Firewall setup - [waf-proxy](https://github.com/riotkit-org/waf-proxy)_
+
+**values.yaml**
+
+```yaml
+waf:
+    enabled: true
+    env:
+        ENABLE_RULE_WORDPRESS: true
+        ENABLE_CRS: true
+        ENABLE_RATE_LIMITER: true
+        RATE_LIMIT_EVENTS: "30"
+        RATE_LIMIT_WINDOW: "5s"
+        ENABLE_CORAZA_WAF: true
+        #DEBUG: true
+```
+
+
 From authors
 ------------
 

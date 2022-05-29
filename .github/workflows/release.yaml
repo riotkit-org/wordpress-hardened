@@ -72,6 +72,9 @@ jobs:
                   git config user.name "$GITHUB_ACTOR"
                   git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
+            - name: Copy README
+              run: "cp README.md helm/wordpress-hardened/"
+
             - name: Publish Helm chart
               uses: stefanprodan/helm-gh-pages@master
               with:

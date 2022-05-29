@@ -1,4 +1,4 @@
-FROM wordpress:5.9.3-php7.4-fpm-alpine
+FROM wordpress:6.0.0-php7.4-fpm-alpine
 MAINTAINER RiotKit <github.com/riotkit-org>
 
 # The credentials does not need to be top secret, at least those credentials needs to protect against automatic bots

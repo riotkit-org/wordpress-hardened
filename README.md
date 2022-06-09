@@ -33,6 +33,7 @@ Roadmap
 - [ ] Support WAF (Web Application Firewall) with [OWASP CRS](https://owasp.org/www-project-modsecurity-core-rule-set/)
 - [x] Real liveness and readiness checks
 - [ ] PHP-FPM chroot (to verify first)
+- [ ] Support for WP Super Cache plugin (https://www.nginx.com/blog/9-tips-for-improving-wordpress-performance-with-nginx/#wp-super-cache)
 
 Changing basic auth password or disabling it at all
 ---------------------------------------------------
@@ -210,8 +211,8 @@ backups:
 
 ```
 
-Enabling WAF protection (Kubernetes only)
------------------------------------------
+Enabling WAF protection using waf-proxy (Kubernetes only)
+---------------------------------------------------------
 
 > :warning: This is experimental and may not work yet.
 
@@ -233,6 +234,51 @@ waf:
         ENABLE_CORAZA_WAF: true
         #DEBUG: true
 ```
+
+Enabling WAF protecting using ingress-nginx (Kubernetes only)
+-------------------------------------------------------------
+
+> :information_source: Works only if you are using [ingress-nginx](https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx) as Ingress Controller.
+
+[ingress-nginx](https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx) has a built-in mod_security v3, that needs to be enabled on global configuration level using those helm values:
+
+```yaml
+controller:
+    config:
+        enable-modsecurity: "true"
+        enable-owasp-modsecurity-crs: "true"
+        modsecurity-snippet: |
+            SecRuleEngine On
+```
+
+> :warning: This will enable mod_security and OWASP Core RuleSet on all ingress resources by default! According to documentation you need to set ingress annotation `nginx.ingress.kubernetes.io/enable-modsecurity: "false"` in every ingress, where you want the WAF to be disabled
+
+**WordPress requires additional tweaking, this can be done using Helm values of our Helm Chart as follows:**
+
+```yaml
+ingresses:
+    - name: wp-https
+      className: nginx
+      annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-staging
+
+          # WAF provided by Ingress NGINX
+          nginx.ingress.kubernetes.io/enable-modsecurity: "true"
+          nginx.ingress.kubernetes.io/enable-owasp-core-rules: "true"
+          nginx.ingress.kubernetes.io/modsecurity-transaction-id: "$request_id"
+          nginx.ingress.kubernetes.io/modsecurity-snippet: |
+              SecRuleEngine On
+              SecAction "id:900130,phase:1,nolog,pass,t:none,setvar:tx.crs_exclusions_drupal=0,setvar:tx.crs_exclusions_wordpress=1,setvar:tx.crs_exclusions_nextcloud=0,setvar:tx.crs_exclusions_dokuwiki=0,setvar:tx.crs_exclusions_cpanel=0"
+      hosts:
+          - host: my-domain.org
+            paths:
+                - path: /
+                  pathType: ImplementationSpecific
+      tls:
+          - hosts: ["my-domain.org"]
+            secretName: my-domain-tls
+```
+
 
 Access log and error log
 ------------------------

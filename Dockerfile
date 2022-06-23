@@ -25,7 +25,8 @@ ENV AUTO_UPDATE_CRON="0 5 * * TUE" \
     WP_SITE_ADMIN_PASSWORD=riotkit \
     WP_SITE_ADMIN_EMAIL=example@example.org \
     ACCESS_LOG=/dev/stdout \
-    ERROR_LOG=/dev/stderr
+    ERROR_LOG=/dev/stderr \
+    WORDPRESS_DB_TABLE_PREFIX=wp_
 
 # p2 (jinja2)
 RUN wget https://github.com/wrouesnel/p2cli/releases/download/r13/p2-linux-x86_64 -O /usr/bin/p2 && chmod +x /usr/bin/p2

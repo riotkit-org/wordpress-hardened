@@ -304,14 +304,26 @@ Mounting extra volumes
 ----------------------
 
 Every file placed in `/mnt/extra-files` will be copied during startup to `/var/www/riotkit/`, this mechanism ensures that
-no any file will be created with root-permissions inside of a `/var/www/riotkit` directory - mounting a volume directly could do so.
+no any file will be created with root-permissions inside a `/var/www/riotkit` directory - mounting a volume directly could do so.
 
 ```yaml
+# create extra ConfigMaps
+extraConfigMaps:
+    - name: my-configmap-name
+      data: 
+          something.php: |
+              <?php
+              echo "Hello anarchism!";
+
+# create extra mounts
 pv:
+    # Pod-level volumes section
     extraVolumes:
         - name: my-config
           configMap:
               name: my-configmap-name
+
+    # Container-level volumeMounts section
     extraVolumeMounts:
         - name: my-config
           mountPath: /mnt/extra-files/wp-content/some-file.php

@@ -1,0 +1,9 @@
+{{- range $attrs := $.Values.extraConfigMaps }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: {{ $attrs.name }}
+data:
+    {{- toYaml $attrs.data | nindent 4 }}
+{{- end }}

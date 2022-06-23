@@ -300,6 +300,24 @@ ACCESS_LOG: off
 ERROR_LOG: off
 ```
 
+Mounting extra volumes
+----------------------
+
+Every file placed in `/mnt/extra-files` will be copied during startup to `/var/www/riotkit/`, this mechanism ensures that
+no any file will be created with root-permissions inside of a `/var/www/riotkit` directory - mounting a volume directly could do so.
+
+```yaml
+pv:
+    extraVolumes:
+        - name: my-config
+          configMap:
+              name: my-configmap-name
+    extraVolumeMounts:
+        - name: my-config
+          mountPath: /mnt/extra-files/wp-content/some-file.php
+          subPath: some-file.php
+```
+
 From authors
 ------------
 

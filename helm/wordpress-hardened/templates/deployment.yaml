@@ -129,6 +129,9 @@ spec:
                       - name: wp-content
                         mountPath: /var/www/riotkit/wp-content
                       {{- end }}
+                      {{- with .Values.pv.extraVolumeMounts }}
+                      {{- toYaml . | nindent 22 }}
+                      {{- end }}
                   ports:
                       - name: http
                         containerPort: 8080
@@ -177,4 +180,7 @@ spec:
                 - name: waf-custom-config
                   configMap:
                       name: {{ include "wordpress-hardened.fullname" . }}-waf-custom-config
+              {{- end }}
+              {{- with .Values.pv.extraVolumes }}
+              {{- toYaml . | nindent 14 }}
               {{- end }}

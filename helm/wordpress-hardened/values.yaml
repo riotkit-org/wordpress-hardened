@@ -37,6 +37,10 @@ pv:
         size: 1Gi
         #storageClassName: "..."
 
+    # use those following to e.g. mount a custom ConfigMap, or a PVC with some data
+    extraVolumes: []
+    extraVolumeMounts: []
+
 
 ingresses: []
 #    - name: wp-https

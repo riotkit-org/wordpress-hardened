@@ -117,7 +117,7 @@ service:
 # Requires Ingress to be created.
 # =====================================================================
 waf:
-    enabled: true
+    enabled: false
     image:
         repository: ghcr.io/riotkit-org/waf-proxy
         tag: snapshot

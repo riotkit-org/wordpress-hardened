@@ -80,11 +80,12 @@ services:
             WORDPRESS_DB_USER: "your_user"
             WORDPRESS_DB_PASSWORD: "${DB_PASSWORD_THERE}"
             WORDPRESS_DB_NAME: "your_app"
+            WORDPRESS_TABLE_PREFIX: "wp_"
             AUTO_UPDATE_CRON: "0 5 * * SAT"
             XMLRPC_DISABLED: "true"
             DISABLE_DIRECT_CONTENT_PHP_EXECUTION: "false"
             ENABLED_PLUGINS: "amazon-s3-and-cloudfront"
-          
+
             # basic auth on administrative endpoints
             BASIC_AUTH_ENABLED: "true"
             BASIC_AUTH_USER: john
@@ -116,6 +117,9 @@ WP_SITE_ADMIN_EMAIL: example@example.org
 #         this means that when `WP_PREINSTALL=false`, then the entrypoint will wait for user 
 #         to complete the installation wizard, then the plugins will be installed
 ENABLED_PLUGINS: "amazon-s3-and-cloudfront,classic-editor"
+
+WP_INSTALLATION_WAIT_INTERVAL: 20   # in seconds, how long to wait until the WordPress is installed to start installing plugins
+WP_PLUGINS_REINSTALL_RETRIES: 30    # 30 retries with 20s interval
 ```
 
 **Example log:**
@@ -155,6 +159,13 @@ Installing the plugin...
 Plugin installed successfully.
 Success: Installed 1 of 1 plugins.
 ```
+
+### How it works?
+
+- Plugins will be installed AFTER WordPress will be installed. Use `WP_PREINSTALL: true` to install WordPress immediately, else the plugins will be installed after user will finish installation process
+- There will be `WP_PLUGINS_REINSTALL_RETRIES` retries of plugins installation
+- If at least one plugin installation will fail, then **after exceeding maximum number of retries the container will exit**
+- Even if some plugins installation will fail, the rest will be installed (installation process does not exit immediately after first fail)
 
 Keeping wp-content and themes in GIT repository (Kubernetes only)
 -----------------------------------------------------------------

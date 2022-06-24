@@ -58,7 +58,7 @@ require_once '/usr/src/wordpress/wp-config-riotkit.php';
  * You can have multiple installations in one database if you give each
  * a unique prefix. Only numbers, letters, and underscores please!
  */
-$table_prefix = isset($_SERVER['WORDPRESS_DB_TABLE_PREFIX']) ? $_SERVER['WORDPRESS_DB_TABLE_PREFIX'] : 'wp_';
+$table_prefix = isset($_SERVER['WORDPRESS_TABLE_PREFIX']) ? $_SERVER['WORDPRESS_TABLE_PREFIX'] : 'wp_';
 
 /**
  * For developers: WordPress debugging mode.

@@ -2,7 +2,7 @@ image:
     repository: ghcr.io/riotkit-org/wordpress-hardened
     tag: "" # defaults to {{ .Release.appVersion }}
 
-terminationGracePeriodSeconds: 5
+terminationGracePeriodSeconds: 20
 
 podSecurityContext:
     runAsUser: 65161
@@ -101,7 +101,6 @@ health:
         attributes:
             failureThreshold: 2
             periodSeconds: 60
-            terminationGracePeriodSeconds: 10
     readiness:
         enabled: true
         attributes:
@@ -143,7 +142,6 @@ waf:
             attributes:
                 failureThreshold: 2
                 periodSeconds: 60
-                terminationGracePeriodSeconds: 10
 
 # =====================================================================
 # Backup Repository integration

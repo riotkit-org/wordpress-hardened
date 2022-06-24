@@ -3,6 +3,7 @@ image:
     tag: "" # defaults to {{ .Release.appVersion }}
 
 terminationGracePeriodSeconds: 20
+revisionHistoryLimit: 1
 
 podSecurityContext:
     runAsUser: 65161

@@ -176,11 +176,11 @@ spec:
                   persistentVolumeClaim:
                       claimName: {{ .Values.pv.wp_content.claimName }}
                 {{- end }}
-              {{- if .Values.waf.enabled }}
+                {{- if .Values.waf.enabled }}
                 - name: waf-custom-config
                   configMap:
                       name: {{ include "wordpress-hardened.fullname" . }}-waf-custom-config
-              {{- end }}
-              {{- with .Values.pv.extraVolumes }}
-              {{- toYaml . | nindent 14 }}
-              {{- end }}
+                {{- end }}
+                {{- with .Values.pv.extraVolumes }}
+                {{- toYaml . | nindent 16 }}
+                {{- end }}

@@ -6,7 +6,7 @@ installPlugins() {
     IFS=, read -ra plugins <<< "${ENABLED_PLUGINS}"
     for plugin in "${plugins[@]}"; do
         echo " >> Installing plugin '${plugin}'"
-        if ! wp plugin install "${plugin}"; then
+        if ! wp plugin install "${plugin}" --activate; then
             status=1
         fi
     done

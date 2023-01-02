@@ -41,7 +41,7 @@ RUN wget https://github.com/nicolas-van/multirun/releases/download/1.1.3/multiru
     && mv multir* /usr/bin/multirun \
     && chmod +x /usr/bin/multirun
 
-RUN apk --update add nginx apache2-utils rsync \
+RUN apk --update add nginx apache2-utils rsync less \
     && curl "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar" --output /usr/bin/wp \
     && mkdir -p /var/tmp/nginx/ /var/lib/nginx/tmp/ \
     && chown www-data:www-data /var/tmp/nginx/ /var/lib/nginx/tmp/ -R \

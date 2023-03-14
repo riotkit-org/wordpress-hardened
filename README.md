@@ -170,7 +170,7 @@ Success: Installed 1 of 1 plugins.
 Keeping wp-content and themes in GIT repository (Kubernetes only)
 -----------------------------------------------------------------
 
-[git-clone-operator](https://github.com/riotkit-org/git-clone-operator) is a Kubernetes operator that allows to clone a GIT repository before a Pod is launched, can be used to automatically fetch your website theme within just few seconds before Pod starts.
+[git-clone-controller](https://github.com/riotkit-org/git-clone-controller) is a Kubernetes controller allowing to clone a GIT repository before a Pod is launched, can be used to automatically fetch your website theme within just few seconds before Pod starts.
 
 Use and adjust following Helm values to clone your WordPress theme from a GIT repository before the application will start up.
 
@@ -181,15 +181,15 @@ Use and adjust following Helm values to clone your WordPress theme from a GIT re
 # theme
 # ----------------------------------------------------------
 podLabels:
-    riotkit.org/git-clone-operator: "true"
+    riotkit.org/git-clone-controller: "true"
 podAnnotations:
-    git-clone-operator/revision: main
-    git-clone-operator/url: "https://git.example.org/my-example/my-theme.git"
-    git-clone-operator/path: /var/www/riotkit/wp-content/themes/my-theme
-    git-clone-operator/secretName: my-secret-name
-    git-clone-operator/secretTokenKey: gitToken
-    git-clone-operator/owner: "65161"
-    git-clone-operator/group: "65161"
+    git-clone-controller/revision: main
+    git-clone-controller/url: "https://git.example.org/my-example/my-theme.git"
+    git-clone-controller/path: /var/www/riotkit/wp-content/themes/my-theme
+    git-clone-controller/secretName: my-secret-name
+    git-clone-controller/secretTokenKey: gitToken
+    git-clone-controller/owner: "65161"
+    git-clone-controller/group: "65161"
 ```
 
 Backup with Backup Repository (Kubernetes only)
@@ -203,23 +203,7 @@ Automatically taking a snapshot of database + files using a CronJob can be confi
 backups:
     enabled: true
     schedule: "16 1 * * *"
-    env:
-        BACKUP_SERVER_URL: "http://my-backup-instance.backups.svc.cluster.local:8080"
-        BACKUP_COLLECTION_ID: "my-collection-name"
-    secrets:
-        create: true
-        name: my-wp-backup-client-secrets
-        content: |
-            stringData:
-                BACKUP_TOKEN: "my-authorization-token-that-allows-to-upload-to-backup-repository-api-server-to-selected-collection-id"  # JWT token here
-                BACKUP_GPG_PASSPHRASE: "my-long-passphrase"
-                BACKUP_GPG_RECIPIENT: "example@example.org" # NOTICE: This must match your GPG key owner
-                BACKUP_GPG_PRIVATE_KEY_CONTENT: |
-                    -----BEGIN PGP PRIVATE KEY BLOCK-----
-
-                    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                    -----END PGP PRIVATE KEY BLOCK-----
-
+    collectionId: "xxx"
 ```
 
 Enabling WAF protection using waf-proxy (Kubernetes only)
@@ -254,6 +238,7 @@ Enabling WAF protecting using ingress-nginx (Kubernetes only)
 [ingress-nginx](https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx) has a built-in mod_security v3, that needs to be enabled on global configuration level using those helm values:
 
 ```yaml
+# Ingress NGINX config snippet
 controller:
     config:
         enable-modsecurity: "true"
@@ -267,6 +252,7 @@ controller:
 **WordPress requires additional tweaking, this can be done using Helm values of our Helm Chart as follows:**
 
 ```yaml
+# WordPress Hardened config snippet
 ingresses:
     - name: wp-https
       className: nginx

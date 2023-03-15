@@ -18,6 +18,6 @@ jobs:
         uses: riotkit-org/.github/.github/workflows/release.helm.yaml@release-1
         needs: ["container-image"]
         with:
-            chartPath: charts/wordpress-hardened
+            chartPath: helm/wordpress-hardened
             chartRepoName: "riotkit-org/charts/"
             chartName: wordpress-hardened

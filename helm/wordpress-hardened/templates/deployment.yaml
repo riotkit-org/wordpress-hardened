@@ -116,8 +116,23 @@ spec:
                         value: "{{ $value }}"
                       {{- end }}
                       {{- end }}
+                      - name: WORDPRESS_DB_NAME
+                        value: {{ .Values.db.name | quote }}
+                      - name: WORDPRESS_DB_USER
+                        value: {{ .Values.db.user | quote }}
+                      - name: WORDPRESS_DB_PORT
+                        value: {{ .Values.db.port | quote }}
+                      - name: WORDPRESS_DB_HOST
+                        value: {{ .Values.db.host | quote }}
+                      - name: WORDPRESS_DB_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: {{ .Values.db.password.secretName | quote }}
+                                key: {{ .Values.db.password.secretKey | quote }}
+
                   envFrom:
                       - secretRef:
+                            optional: true
                             name: {{ .Values.secrets.name }}
                   securityContext:
                       allowPrivilegeEscalation: false

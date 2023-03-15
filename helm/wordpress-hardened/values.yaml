@@ -46,7 +46,6 @@ pv:
         #storageClassName: "..."
 
     # [!!!] Disabling persistence on wp-content may be dangerous, better know what you are doing
-    #       Advanced usage: Store everything in S3 instead of in wp-content, then disable persistent volume and make WordPress a bit more stateless
     wp_content:
         enabled: true
         claimName: wp-content
@@ -79,28 +78,15 @@ env:
     WP_PAGE_URL: "https://my-page.org"
     HEALTH_CHECK_ALLOWED_SUBNET: "10.0.0.0/8"   # type your POD CIDR there or explicit control plane IP address
 
-# allows to embed `kind: Secret`, `kind: SealedSecret`, `kind: ExternalSecret` or any other secret
+# -- Allows to embed `kind: Secret`, `kind: SealedSecret`, `kind: ExternalSecret` or any other secret. Use it for example with Bitnami's Sealed Secret
 secrets:
     name: wordpress-secrets
-    create: true
-
-    apiVersion: v1
-    kind: Secret
+    create: false
+    apiVersion: bitnami.com/v1alpha1
+    kind: SealedSecret
     content: |
-        stringData:
-            AUTH_KEY: change-me
-            SECURE_AUTH_KEY: change-me
-            LOGGED_IN_KEY: change-me
-            NONCE_KEY: change-me
-            AUTH_SALT: change-me
-            SECURE_AUTH_SALT: change-me
-            LOGGED_IN_SALT: change-me
-            NONCE_SALT: change-me
-        
-            WORDPRESS_DB_NAME: "wordpress"
-            WORDPRESS_DB_USER: "wordpress"
-            WORDPRESS_DB_PASSWORD: "secret"
-            WORDPRESS_DB_HOST: "mariadb.db.svc.cluster.local"
+        encryptedData:
+            ...
 
 resources:
     requests:

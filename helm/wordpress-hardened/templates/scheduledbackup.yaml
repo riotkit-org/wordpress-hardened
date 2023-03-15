@@ -1,0 +1,68 @@
+{{ if .Values.backups.enabled }}
+---
+apiVersion: riotkit.org/v1alpha1
+kind: ScheduledBackup
+metadata:
+    name: {{ include "wordpress-hardened.fullname" . }}
+    labels:
+        {{- include "wordpress-hardened.labels" . | nindent 8 }}
+spec:
+    collectionId: {{ .Values.backups.collectionId | quote }}
+    cronJob:
+        enabled: true
+        scheduleEvery: {{ .Values.backups.schedule | quote }}
+    gpgKeySecretRef:
+        createIfNotExists: {{ .Values.backups.secrets.gpgKeys.createIfNotExists }}
+        email: {{ .Values.backups.email | quote }}
+        passphraseKey: passphrase
+        privateKey: private
+        publicKey: public
+        secretName: {{ .Values.backups.secrets.gpgKeys.secretName }}
+    operation: backup
+    templateRef:
+        kind: {{ .Values.backups.templateType }}
+        name: {{ .Values.backups.templateName }}
+    tokenSecretRef:
+        secretName: {{ .Values.backups.secrets.loginToken.secretName | quote }}
+        tokenKey: {{ .Values.backups.secrets.loginToken.secretKey | quote }}
+    vars: |
+        # =================================================================================
+        # Docs: https://github.com/riotkit-org/br-backup-maker/tree/main/generate/templates
+        # See backup type: wordpress-mariadb-x.y
+        # =================================================================================
+
+        Params:
+          hostname: {{ .Values.db.host | quote }}
+          port: {{ .Values.db.port | quote }}
+          db: {{ .Values.db.name | quote }}
+          user: {{ .Values.db.user | quote }}
+          password: "${DB_PASSWORD}"
+
+        Repository:
+          url: {{ .Values.backups.url | quote }}
+          recipient: {{ .Values.backups.email | quote }}
+          collectionId: {{ .Values.backups.collectionId | quote }}
+          passphrase: ""
+
+        HelmValues:
+          # in case of WordPress the workspace size depends on compressed database dump size, as it is written on the temporary workspace
+          workspaceVolume:
+            size: "256M"
+            medium: Memory
+
+          # wp-content volume must be mounted, so the backup could reach it
+          extraVolumes:
+            - name: wordpress-pv
+              persistentVolumeClaim:
+                  claimName: {{ .Values.pv.wp_content.claimName }}
+
+          # password will be fetched directly from the same Secret as the application takes it itself
+          extraEnv:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.password.secretName }}
+                  key: {{ .Values.db.password.secretKey }}
+    varsSecretRef:
+        importOnlyKeys: []
+{{ end }}

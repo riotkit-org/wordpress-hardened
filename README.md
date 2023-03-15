@@ -1,19 +1,19 @@
-Wordpress Hardened
+WordPress Hardened
 ==================
 
-Hardened version of official Wordpress container, with special support for Kubernetes.
+Hardened version of official WordPress container, with special support for Kubernetes.
 
 **Features:**
 - Scheduled updates via wp-cli
 - **NGINX instead of Apache**
-- Support [NGINX-PROXY](https://github.com/nginx-proxy/nginx-proxy) (VIRTUAL_HOST environment variable)
-- Hardened settings for Wordpress: limiting access to code execution from wp-content directory, basic auth on wp-login.php
+- Supports [NGINX-PROXY](https://github.com/nginx-proxy/nginx-proxy) (VIRTUAL_HOST environment variable)
+- Hardened settings for WordPress: limiting access to code execution from wp-content directory, basic auth on wp-login.php
 - Basic Auth enabled by default to protect wp-login against bots (default user: `riotkit`, password: `riotkit`), can be changed using environment variables
 - Helm installer for Kubernetes
 - Non-root container
 - Free from Supervisord, using lightweight [multirun](https://github.com/nicolas-van/multirun) instead
 - Runtime NGINX and PHP configuration to adjust things like `memory_limit`, `error_reporting` or `post_max_size`
-- Preconfiguration of admin account, website name and list of installed plugins
+- Pre-configuration of admin account, website name and list of installed plugins
 - Possible to upgrade Wordpress together with docker container
 - Integration with [Backup Repository](https://github.com/riotkit-org/backup-repository)
 - Web Application Firewall and OWASP CRS support (experimental)

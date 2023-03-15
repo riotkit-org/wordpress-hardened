@@ -1,92 +1,23 @@
 name: Test and release
 on:
     push:
+    workflow_dispatch:
+        inputs: {}
 
 jobs:
-    test:
-        runs-on: ubuntu-20.04
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v3
-              with:
-                  fetch-depth: 0
+    container-image:
+        uses: riotkit-org/.github/.github/workflows/release.container.yaml@release-1
+        with:
+            osVariant: ubuntu-22.04
+            intermediateArtifactsPath: ""
+            dockerImage: "ghcr.io/riotkit-org/wordpress-hardened"
 
-            - name: Set up Helm
-              uses: azure/setup-helm@v1
-              with:
-                  version: v3.8.1
+    # todo: test on k3s
 
-            - name: Linting
-              working-directory: helm/wordpress-hardened
-              run: helm lint ./
-
-            - name: Template and default values check
-              working-directory: helm/wordpress-hardened
-              run: helm template ./
-
-    release-docker:
-        runs-on: ubuntu-20.04
-        needs: ["test"]
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-              with:
-                  fetch-depth: 0
-
-            - name: Login to GitHub Container Registry
-              uses: docker/login-action@v1
-              with:
-                  registry: ghcr.io
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
-
-            - name: Create docker tags
-              id: meta
-              uses: docker/metadata-action@v3
-              with:
-                  images: ghcr.io/riotkit-org/wordpress-hardened
-
-            - name: Build and release docker
-              uses: docker/build-push-action@v2
-              with:
-                  context: .
-                  push: ${{ github.event_name != 'pull_request' }}
-                  tags: ${{ steps.meta.outputs.tags }},ghcr.io/riotkit-org/wordpress-hardened:dev
-                  labels: ${{ steps.meta.outputs.labels }}
-
-            - name: Test image
-              run: make test IMAGE=ghcr.io/riotkit-org/wordpress-hardened:dev
-
-    release-chart:
-        runs-on: ubuntu-20.04
-        needs: ["release-docker"]
-        if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v3
-              with:
-                  fetch-depth: 0
-
-            - name: Configure Git
-              run: |
-                  git config user.name "$GITHUB_ACTOR"
-                  git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
-            - name: Copy README
-              run: "cp README.md helm/wordpress-hardened/"
-
-            - name: Publish Helm chart
-              uses: stefanprodan/helm-gh-pages@master
-              with:
-                  token: "${{ secrets.GH_RW_TOKEN }}"
-                  charts_dir: helm
-                  charts_url: https://riotkit-org.github.io/helm-of-revolution
-                  owner: riotkit-org
-                  repository: helm-of-revolution
-                  branch: gh-pages
-                  target_dir: ./
-                  commit_username: "${{ env.GITHUB_ACTOR }}"
-                  commit_email: "${{ env.GITHUB_ACTOR }}@users.noreply.github.com"
-
-                  app_version: "${{github.ref_name}}"
-                  chart_version: "${{github.ref_name}}"
+    helm:
+        uses: riotkit-org/.github/.github/workflows/release.helm.yaml@release-1
+        needs: ["container-image"]
+        with:
+            chartPath: charts/wordpress-hardened
+            chartRepoName: "riotkit-org/charts/"
+            chartName: wordpress-hardened

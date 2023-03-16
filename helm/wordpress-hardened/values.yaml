@@ -80,6 +80,7 @@ env:
 
 # -- Allows to embed `kind: Secret`, `kind: SealedSecret`, `kind: ExternalSecret` or any other secret. Use it for example with Bitnami's Sealed Secret
 secrets:
+    enabled: false
     name: wordpress-secrets
     create: false
     apiVersion: bitnami.com/v1alpha1

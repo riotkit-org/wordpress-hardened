@@ -130,12 +130,15 @@ spec:
                                 name: {{ .Values.db.password.secretName | quote }}
                                 key: {{ .Values.db.password.secretKey | quote }}
 
+                  {{ if .Values.secrets.enabled }}
                   envFrom:
                       - secretRef:
                             optional: true
                             name: {{ .Values.secrets.name }}
+                  {{ end }}
                   securityContext:
                       allowPrivilegeEscalation: false
+                      runAsNonRoot: true
                   volumeMounts:
                       {{- if .Values.pv.wp.enabled }}
                       - name: wp

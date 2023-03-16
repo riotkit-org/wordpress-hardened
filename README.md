@@ -327,6 +327,21 @@ pv:
           subPath: some-file.php
 ```
 
+Using proxy to connect to the internet (egress traffic, http proxy)
+-------------------------------------------------------------------
+
+In restricted environments you may want to deny all egress traffic from your WordPress instance, but let the WordPress
+update itself and install/upgrade plugins using a HTTP proxy, where you are in control of allowed internet destinations.
+
+```yaml
+env:
+    WP_PROXY_HOST: my-proxy.proxy.svc.cluster.local
+    WP_PROXY_PORT: 8080
+    WP_PROXY_USERNAME: user
+    WP_PROXY_PASSWORD: xxxxx
+    WP_PROXY_BYPASS_HOSTS: localhost
+```
+
 From authors
 ------------
 

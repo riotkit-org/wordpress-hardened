@@ -189,6 +189,7 @@ backups:
 # ========================================================================================
 volumeSyncing:
     enabled: false
+    # remotePath: "..."  # defaults to release name
     syncOptions:
         schedule: "@every 8h"
         cleanUp:

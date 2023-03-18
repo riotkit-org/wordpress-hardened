@@ -19,7 +19,7 @@ metadata:
       {{- toYaml . | nindent 6 }}
   {{- end }}
 spec:
-  {{- if $ingress.className }}
+  {{- if and $ingress.className (not (hasKey $ingress.annotations "kubernetes.io/ingress.class")) }}
     ingressClassName: {{ $ingress.className }}
   {{- end }}
   {{- if $ingress.tls }}

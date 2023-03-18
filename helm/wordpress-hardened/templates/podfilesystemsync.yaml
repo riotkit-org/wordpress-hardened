@@ -17,7 +17,7 @@ spec:
         permissions:
             uid: "65161"
             gid: "65161"
-        cleanUp: {{ toJson .Values.volumeSyncing.syncOptions.schedule }}
+        cleanUp: {{ toJson .Values.volumeSyncing.syncOptions.cleanUp }}
         allowedDirections: {{ toJson .Values.volumeSyncing.syncOptions.allowedDirections }}
         restoreRemoteOnFirstRun: {{ .Values.volumeSyncing.syncOptions.restoreRemoteOnFirstRun }}
 

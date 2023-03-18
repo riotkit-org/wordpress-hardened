@@ -17,13 +17,13 @@ spec:
         passphraseKey: passphrase
         privateKey: private
         publicKey: public
-        secretName: {{ .Values.backups.secrets.gpgKeys.secretName }}
+        secretName: {{ (default (printf "%s-gpg" (include "wordpress-hardened.fullname" .)) .Values.backups.secrets.gpgKeys.secretName) | quote }}
     operation: backup
     templateRef:
         kind: {{ .Values.backups.templateType }}
         name: {{ .Values.backups.templateName }}
     tokenSecretRef:
-        secretName: {{ .Values.backups.secrets.loginToken.secretName | quote }}
+        secretName: {{ (default .Values.secrets.name .Values.backups.secrets.loginToken.secretName) | quote }}
         tokenKey: {{ .Values.backups.secrets.loginToken.secretKey | quote }}
     vars: |
         # =================================================================================

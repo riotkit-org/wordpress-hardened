@@ -60,17 +60,16 @@ pv:
     extraVolumeMounts: []
 
 
-ingresses: []
-#    - className: nginx
-#      annotations:
-#          cert-manager.io/cluster-issuer: letsencrypt-staging
-#      hosts:
-#          - paths:
-#                - path: /
-#                  pathType: ImplementationSpecific
-#      tls:
-#          - hosts: []
-#            secretName: wp-tls
+ingresses:
+    - className: nginx
+      annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-staging
+      hosts:
+          - paths:
+                - path: /
+                  pathType: ImplementationSpecific
+      tls:
+          - hosts: []
 
 # environment variables passed to the container - see Dockerfile and https://github.com/riotkit-org/wordpress-hardened for reference
 env:

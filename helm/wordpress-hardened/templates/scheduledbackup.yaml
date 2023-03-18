@@ -25,12 +25,12 @@ spec:
     tokenSecretRef:
         secretName: {{ (default .Values.secrets.name .Values.backups.secrets.loginToken.secretName) | quote }}
         tokenKey: {{ .Values.backups.secrets.loginToken.secretKey | quote }}
-    vars: |
-        # =================================================================================
-        # Docs: https://github.com/riotkit-org/br-backup-maker/tree/main/generate/templates
-        # See backup type: wordpress-mariadb-x.y
-        # =================================================================================
 
+    # =================================================================================
+    # Docs: https://github.com/riotkit-org/br-backup-maker/tree/main/generate/templates
+    # See backup type: wordpress-mariadb-x.y
+    # =================================================================================
+    vars: |
         Params:
           hostname: {{ .Values.db.host | quote }}
           port: {{ .Values.db.port | quote }}
@@ -45,24 +45,21 @@ spec:
           passphrase: ""
 
         HelmValues:
-          # in case of WordPress the workspace size depends on compressed database dump size, as it is written on the temporary workspace
           workspaceVolume:
             size: "256M"
             medium: Memory
 
-          # wp-content volume must be mounted, so the backup could reach it
           extraVolumes:
             - name: wordpress-pv
               persistentVolumeClaim:
-                  claimName: {{ .Values.pv.wp_content.claimName }}
+                  claimName: {{ .Values.pv.wp_content.claimName | quote }}
 
-          # password will be fetched directly from the same Secret as the application takes it itself
           extraEnv:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.db.password.secretName }}
-                  key: {{ .Values.db.password.secretKey }}
+                  name: {{ .Values.db.password.secretName | quote }}
+                  key: {{ .Values.db.password.secretKey | quote }}
     varsSecretRef:
         importOnlyKeys: []
 {{ end }}

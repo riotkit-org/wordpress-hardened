@@ -9,16 +9,18 @@ Hardened version of official WordPress container, with special support for Kuber
 - Supports [NGINX-PROXY](https://github.com/nginx-proxy/nginx-proxy) (VIRTUAL_HOST environment variable)
 - Hardened settings for WordPress: limiting access to code execution from wp-content directory, basic auth on wp-login.php
 - Basic Auth enabled by default to protect wp-login against bots (default user: `riotkit`, password: `riotkit`), can be changed using environment variables
-- Helm installer for Kubernetes
 - Non-root container
 - Free from Supervisord, using lightweight [multirun](https://github.com/nicolas-van/multirun) instead
 - Runtime NGINX and PHP configuration to adjust things like `memory_limit`, `error_reporting` or `post_max_size`
 - Pre-configuration of admin account, website name and list of installed plugins
 - Possible to upgrade Wordpress together with docker container
+- Built-in primitive rules to block common exploits targeting PHP
+
+**Kubernetes-only features:**
+- Helm installer
 - Integration with [Backup Repository](https://github.com/riotkit-org/backup-repository) (for Kubernetes-native backups)
 - Integration with [Volume Syncing Controller](https://github.com/riotkit-org/volume-syncing-controller) (for WordPress volume synchronization between Pod and cloud filesystem)
 - Web Application Firewall and OWASP CRS support (experimental)
-- Built-in primitive rules to block common exploits targeting PHP
 
 Roadmap
 -------

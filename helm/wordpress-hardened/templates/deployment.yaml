@@ -119,6 +119,17 @@ spec:
                         value: "{{ $value }}"
                       {{- end }}
                       {{- end }}
+
+                      {{- if not (hasKey .Values.env "WP_PAGE_URL") }}
+                      - name: WP_PAGE_URL
+                        value: "https://{{ .Values.domain }}"
+                      {{- end }}
+
+                      {{- if not (hasKey .Values.env "HEALTH_CHECK_ALLOWED_SUBNET") }}
+                      - name: HEALTH_CHECK_ALLOWED_SUBNET
+                        value: {{ .Values.health.allowedSubnets | quote }}
+                      {{- end }}
+
                       - name: WORDPRESS_DB_NAME
                         value: {{ .Values.db.name | quote }}
                       - name: WORDPRESS_DB_USER

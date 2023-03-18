@@ -5,6 +5,7 @@ image:
 terminationGracePeriodSeconds: 20
 revisionHistoryLimit: 1
 podLabels: {}
+domain: example.org
 
 podSecurityContext:
     runAsUser: 65161
@@ -76,8 +77,6 @@ ingresses: []
 # environment variables passed to the container - see Dockerfile and https://github.com/riotkit-org/wordpress-hardened for reference
 env:
     HTTPS: "on"
-    WP_PAGE_URL: "https://my-page.org"
-    HEALTH_CHECK_ALLOWED_SUBNET: "10.0.0.0/8"   # type your POD CIDR there or explicit control plane IP address
 
 # -- Allows to embed `kind: Secret`, `kind: SealedSecret`, `kind: ExternalSecret` or any other secret. Use it for example with Bitnami's Sealed Secret
 secrets:
@@ -99,6 +98,7 @@ resources:
         cpu: 1
 
 health:
+    allowedSubnets: "10.0.0.0/8"
     liveness:
         enabled: true
         attributes:

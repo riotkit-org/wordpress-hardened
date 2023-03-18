@@ -3,18 +3,12 @@
 
 ---
   {{ $svcPort := $.Values.service.port -}}
-  {{ if and $ingress.className (not (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion)) }}
+  {{ if $ingress.className }}
   {{ if not (hasKey $ingress.annotations "kubernetes.io/ingress.class") }}
   {{ $_ := set $ingress.annotations "kubernetes.io/ingress.class" $ingress.className}}
   {{ end }}
   {{ end }}
-  {{ if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
 apiVersion: networking.k8s.io/v1
-  {{- else if semverCompare ">=1.14-0" $.Capabilities.KubeVersion.GitVersion -}}
-apiVersion: networking.k8s.io/v1beta1
-  {{- else -}}
-apiVersion: extensions/v1beta1
-  {{- end }}
 kind: Ingress
 metadata:
     name: {{ .name }}
@@ -25,7 +19,7 @@ metadata:
       {{- toYaml . | nindent 6 }}
   {{- end }}
 spec:
-  {{- if and (and $ingress.className (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion)) $ingress.className }}
+  {{- if $ingress.className }}
     ingressClassName: {{ $ingress.className }}
   {{- end }}
   {{- if $ingress.tls }}
@@ -40,24 +34,19 @@ spec:
   {{- end }}
     rules:
       {{- range $ingress.hosts }}
-        - host: {{ .host | quote }}
+        - host: {{ default .Values.domain .host | quote }}
           http:
               paths:
                 {{- range .paths }}
                   - path: {{ .path }}
-                    {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+                    {{- if .pathType }}
                     pathType: {{ .pathType }}
                     {{- end }}
                     backend:
-                      {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
                         service:
                             name: {{ if $.Values.waf.enabled }}{{ $fullName }}-waf-protected{{ else }}{{ $fullName }}{{ end }}
                             port:
                                 number: 80
-                      {{- else }}
-                        serviceName: {{ if $.Values.waf.enabled }}{{ $fullName }}-waf-protected{{ else }}{ $fullName }}{{ end }}
-                        servicePort: 80
-                      {{- end }}
                 {{- end }}
       {{- end }}
 

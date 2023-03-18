@@ -11,7 +11,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-    name: {{ .name }}
+    name: {{ .name | default $fullName }}
     labels:
       {{- include "wordpress-hardened.labels" $ | nindent 6 }}
   {{- with $ingress.annotations }}

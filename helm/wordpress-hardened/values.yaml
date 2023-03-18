@@ -61,17 +61,15 @@ pv:
 
 
 ingresses: []
-#    - name: wp-https
-#      className: nginx
+#    - className: nginx
 #      annotations:
 #          cert-manager.io/cluster-issuer: letsencrypt-staging
 #      hosts:
-#          - host: example.org
-#            paths:
+#          - paths:
 #                - path: /
 #                  pathType: ImplementationSpecific
 #      tls:
-#          - hosts: ["example.org"]
+#          - hosts: []
 #            secretName: wp-tls
 
 # environment variables passed to the container - see Dockerfile and https://github.com/riotkit-org/wordpress-hardened for reference

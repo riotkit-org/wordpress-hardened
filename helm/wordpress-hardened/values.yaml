@@ -192,8 +192,10 @@ volumeSyncing:
     syncOptions:
         schedule: "@every 8h"
         cleanUp:
-            remote: true
+            forceLocal: false
+            forceRemote: false
             local: false
+            remote: true
         allowedDirections:
             fromRemote: true
             toRemote: true

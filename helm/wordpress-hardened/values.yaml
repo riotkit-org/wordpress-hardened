@@ -4,6 +4,7 @@ image:
 
 terminationGracePeriodSeconds: 20
 revisionHistoryLimit: 1
+podLabels: {}
 
 podSecurityContext:
     runAsUser: 65161

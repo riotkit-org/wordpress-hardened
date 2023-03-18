@@ -34,7 +34,7 @@ spec:
                 {{- toYaml . | nindent 16 }}
                 {{- end }}
                 {{- if .Values.volumeSyncing.enabled }}
-                riotkit.org/volume-syncing-controller: true
+                riotkit.org/volume-syncing-controller: "true"
                 {{- end }}
         spec:
             automountServiceAccountToken: false

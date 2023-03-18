@@ -26,9 +26,13 @@ spec:
     tls:
       {{- range $ingress.tls }}
         - hosts:
+            {{- if not (hasKey . "hosts" ) }}
+              - {{ .Values.domain | quote }}
+            {{ else }}
             {{- range .hosts }}
               - {{ . | quote }}
             {{- end }}
+            {{ end }}
           secretName: {{ .secretName | default $fullName }}
       {{- end }}
   {{- end }}

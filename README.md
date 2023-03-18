@@ -15,7 +15,8 @@ Hardened version of official WordPress container, with special support for Kuber
 - Runtime NGINX and PHP configuration to adjust things like `memory_limit`, `error_reporting` or `post_max_size`
 - Pre-configuration of admin account, website name and list of installed plugins
 - Possible to upgrade Wordpress together with docker container
-- Integration with [Backup Repository](https://github.com/riotkit-org/backup-repository)
+- Integration with [Backup Repository](https://github.com/riotkit-org/backup-repository) (for Kubernetes-native backups)
+- Integration with [Volume Syncing Controller](https://github.com/riotkit-org/volume-syncing-controller) (for WordPress volume synchronization between Pod and cloud filesystem)
 - Web Application Firewall and OWASP CRS support (experimental)
 - Built-in primitive rules to block common exploits targeting PHP
 

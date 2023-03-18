@@ -182,3 +182,36 @@ backups:
         gpgKeys:
             createIfNotExists: true
             secretName: backups-gpg
+
+# ========================================================================================
+# Volume Syncing Controller support
+#
+# Docs:
+#   - https://github.com/riotkit-org/volume-syncing-controller#volume-syncing-controller)
+# ========================================================================================
+volumeSyncing:
+    enabled: false
+    syncOptions:
+        schedule: "@every 8h"
+        cleanUp:
+            remote: true
+            local: false
+        allowedDirections:
+            fromRemote: true
+            toRemote: true
+        restoreRemoteOnFirstRun: false
+    env:
+        # -- Remote storage configuration
+        REMOTE_TYPE: s3
+        REMOTE_PROVIDER: Minio
+        REMOTE_ENDPOINT: http://minio.storage.svc.cluster.local:9000
+        REMOTE_ACL: private
+        # ... put there more variables ... #
+        # see: https://github.com/riotkit-org/volume-syncing-controller#how-it-works
+    secret:
+        # For example for Minio or AWS this secret should have `REMOTE_ACCESS_KEY_ID` and `REMOTE_SECRET_ACCESS_KEY` keys
+        name: "" # defaults to .Values.secrets.name
+
+    automaticEncryption:
+        enabled: true
+        secretName: sync-encryption

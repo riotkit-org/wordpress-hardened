@@ -1,0 +1,31 @@
+{{ if .Values.volumeSyncing.enabled }}
+---
+apiVersion: riotkit.org/v1alpha1
+kind: PodFilesystemSync
+metadata:
+    name: {{ include "wordpress-hardened.fullname" . }}
+spec:
+    podSelector:
+        matchLabels:
+            {{- include "wordpress-hardened.selectorLabels" . | nindent 12 }}
+
+    localPath: "/var/www/riotkit/wp-content"
+    remotePath: '/{{ include "wordpress-hardened.fullname" . }}'
+    syncOptions:
+        method: "scheduler"
+        schedule: {{ .Values.volumeSyncing.syncOptions.schedule | quote }}
+        permissions:
+            uid: "65161"
+            gid: "65161"
+        cleanUp: {{ toJson .Values.volumeSyncing.syncOptions.schedule }}
+        allowedDirections: {{ toJson .Values.volumeSyncing.syncOptions.allowedDirections }}
+        restoreRemoteOnFirstRun: {{ .Values.volumeSyncing.syncOptions.restoreRemoteOnFirstRun }}
+
+    env: {{ toJson .Values.volumeSyncing.env }}
+    envFromSecrets:
+        - name: {{ .Values.volumeSyncing.secret.name | default .Values.secrets.name }}
+          namespace: {{ .Release.Namespace }}
+    automaticEncryption:
+        enabled: {{ .Values.volumeSyncing.automaticEncryption.enabled }}
+        secretName: {{ .Values.volumeSyncing.automaticEncryption.secretName | default (include "wordpress-hardened.fullname" .) }}
+{{- end }}

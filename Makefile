@@ -1,8 +1,9 @@
 IMAGE=wordpress-hardened
+ENV_CLUSTER_NAME=rkt
 
 .EXPORT_ALL_VARIABLES:
 PATH = $(shell pwd)/.build:$(shell echo $$PATH)
-KUBECONFIG = $(shell /bin/bash -c 'rm $$HOME/.k3d/kubeconfig-${ENV_CLUSTER_NAME}.yaml -f; k3d kubeconfig merge ${ENV_CLUSTER_NAME} > /dev/null 2>&1 || true; echo "$$HOME/.k3d/kubeconfig-${ENV_CLUSTER_NAME}.yaml"')
+KUBECONFIG = $(shell /bin/bash -c 'rm $$HOME/.k3d/kubeconfig-${ENV_CLUSTER_NAME}.yaml -f; k3d kubeconfig merge ${ENV_CLUSTER_NAME} > /dev/null || true; echo "$$HOME/.k3d/kubeconfig-${ENV_CLUSTER_NAME}.yaml"')
 
 
 build:
@@ -12,7 +13,6 @@ run:
 	docker run --rm --name wp-riotkit -p 8090:8080 ${IMAGE}
 
 integration-test:
-	k3d kubeconfig merge ${ENV_CLUSTER_NAME}
 	kuttl test
 
 test: test_installed test_installs_plugins

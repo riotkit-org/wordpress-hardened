@@ -39,6 +39,7 @@ prepare-tools:  ## Installs required tools
 	@test -f ./.build/kuttl || (curl -sL https://github.com/kudobuilder/kuttl/releases/download/v0.15.0/kubectl-kuttl_0.15.0_linux_x86_64 --output ./.build/kuttl && chmod +x ./.build/kuttl)
 
 skaffold-deploy: prepare-tools  ## Deploys app with dependencies using Skaffold
+	k3d kubeconfig merge ${ENV_CLUSTER_NAME}
 	if [[ "${ENV_SKAFFOLD_DEPLOY_DEPS}" == "true" ]]; then skaffold deploy -p deps; fi
 	if [[ "${ENV_SKAFFOLD_DEPLOY_APP}" == "true" ]]; then \
 		skaffold build -p app --tag e2e --default-repo ${ENV_CLUSTER_NAME}-registry:5000 --push --insecure-registry ${ENV_CLUSTER_NAME}-registry:5000 --disable-multi-platform-build=true --detect-minikube=false --cache-artifacts=false; \

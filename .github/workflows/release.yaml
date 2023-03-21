@@ -12,8 +12,6 @@ jobs:
             intermediateArtifactsPath: ""
             dockerImage: "ghcr.io/riotkit-org/wordpress-hardened"
 
-    # todo: test on k3s
-
     helm:
         uses: riotkit-org/.github/.github/workflows/release.helm.yaml@release-1
         needs: ["container-image"]
@@ -21,3 +19,9 @@ jobs:
             chartPath: helm/wordpress-hardened
             chartRepoName: "riotkit-org/charts/"
             chartName: wordpress-hardened
+
+    test:
+        uses: riotkit-org/.github/.github/workflows/test.integration-tests.yaml@release-1
+        with:
+            osVariant: ubuntu-22.04
+            pythonEnabled: true

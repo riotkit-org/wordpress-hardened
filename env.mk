@@ -39,7 +39,7 @@ prepare-tools:  ## Installs required tools
 
 skaffold-deploy: prepare-tools  ## Deploys app with dependencies using Skaffold
 	export KUBECONFIG=~/.k3d/kubeconfig-${ENV_CLUSTER_NAME}.yaml; \
-	skaffold deploy -p deps; \
+	skaffold deploy -p deps \
 	&& skaffold build -p app --tag e2e --default-repo ${ENV_CLUSTER_NAME}-registry:5000 --push --insecure-registry ${ENV_CLUSTER_NAME}-registry:5000 --disable-multi-platform-build=true --detect-minikube=false --cache-artifacts=false \
 	&& skaffold deploy -p app --tag e2e --assume-yes=true --default-repo ${ENV_CLUSTER_NAME}-registry:5000; \
 	kubectl port-forward svc/${ENV_APP_SVC} -n ${ENV_NS} ${ENV_PORT_FORWARD} &

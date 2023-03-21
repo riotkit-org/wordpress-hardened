@@ -6,6 +6,9 @@ build:
 run:
 	docker run --rm --name wp-riotkit -p 8090:8080 ${IMAGE}
 
+integration-test:
+	kuttl test
+
 test: test_installed test_installs_plugins
 
 test_installed:

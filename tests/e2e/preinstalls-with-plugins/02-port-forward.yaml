@@ -1,0 +1,6 @@
+---
+apiVersion: kuttl.dev/v1beta1
+kind: TestStep
+commands:
+    - command: "/bin/bash -c 'kubectl port-forward svc/wp-wph -n ${NAMESPACE} 8050:80 &'"
+    - command: "curl 127.0.0.1:8050 -vvv"

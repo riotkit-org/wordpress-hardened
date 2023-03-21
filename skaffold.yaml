@@ -21,25 +21,21 @@ profiles:
           statusCheckDeadlineSeconds: 120
           helm:
               releases:
-#                  - name: server
-#                    chartPath: helm/backup-repository-server
-#                    recreatePods: true
-#                    namespace: backups
-#                    createNamespace: true
-#                    valuesFiles:
-#                        - helm/examples/backup-repository-ci.values.yaml
-#                    setValueTemplates:
-#                        installCRD: "false"
-#                        image.repository: 'bmt-registry:5000/backup-repository'
-#                        image.tag: '{{.IMAGE_TAG}}'
-#                        terminationGracePeriodSeconds: 1
-#                        env.GIN_MODE: "debug"
+                  - name: wp
+                    chartPath: helm/backup-repository-server
+                    recreatePods: true
+                    namespace: backups
+                    createNamespace: true
+                    setValueTemplates:
+
+
+
       portForward:
-#          - resourceType: service
-#            resourceName: server-backup-repository-server
-#            namespace: backups
-#            port: 8080
-#            localPort: 8050
+          - resourceType: service
+            resourceName: server-backup-repository-server
+            namespace: wp
+            port: 8080
+            localPort: 8050
 
 
     - name: deps
@@ -48,22 +44,18 @@ profiles:
           statusCheckDeadlineSeconds: 120
           helm:
               releases:
-#                  - name: postgresql
-#                    repo: https://charts.bitnami.com/bitnami
-#                    version: 12.1.2
-#                    remoteChart: postgresql
-#                    namespace: db
-#                    createNamespace: true
-#                    wait: true
-#                    valuesFiles:
-#                        - helm/examples/postgresql.values.yaml
-#
-#                  - name: minio
-#                    repo: https://charts.min.io/
-#                    version: 5.0.1
-#                    remoteChart: minio
-#                    namespace: storage
-#                    createNamespace: true
-#                    wait: true
-#                    valuesFiles:
-#                        - helm/examples/minio.values.yaml
+                  - name: mariadb
+                    repo: https://charts.bitnami.com/bitnami
+                    version: 11.5.4
+                    remoteChart: mariadb
+                    namespace: db
+                    createNamespace: true
+                    wait: true
+                    setValueTemplates:
+                        fullnameOverride: mariadb
+                        architecture: standalone
+                        auth.rootPassword: "lgbt-1312"
+                        auth.password: "lgbt-1312"
+                        auth.database: "riotkit"
+                        auth.username: "riotkit"
+

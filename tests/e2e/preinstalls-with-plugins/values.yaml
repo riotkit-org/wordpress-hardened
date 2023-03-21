@@ -1,0 +1,8 @@
+db:
+    user: wordpress
+    name: wordpress
+    host: mariadb.db.svc.cluster.local
+    port: 3306
+    password:
+        secretName: db-credentials
+        secretKey: password

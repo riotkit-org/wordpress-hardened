@@ -1,0 +1,7 @@
+---
+apiVersion: kuttl.dev/v1beta1
+kind: TestStep
+commands:
+    - command:
+    - command: helm upgrade --install wp ../../../helm/wordpress-hardened --values ./values.yaml -n ${NAMESPACE}
+

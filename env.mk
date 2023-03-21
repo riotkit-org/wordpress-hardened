@@ -1,4 +1,5 @@
 SUDO=
+SHELL := /bin/bash
 
 ifneq (,$(wildcard ./.env))
     include .env

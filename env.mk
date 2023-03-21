@@ -17,6 +17,10 @@ ENV_PORT_FORWARD ?= "8050:8080"
 PATH = $(shell pwd)/.build:$(shell echo $$PATH)
 KUBECONFIG = $(shell /bin/bash -c 'rm $$HOME/.k3d/kubeconfig-${ENV_CLUSTER_NAME}.yaml -f; k3d kubeconfig merge ${ENV_CLUSTER_NAME} > /dev/null 2>&1 || true; echo "$$HOME/.k3d/kubeconfig-${ENV_CLUSTER_NAME}.yaml"')
 
+.PHONY: kubeconfig
+kubeconfig:
+	k3d kubeconfig merge ${ENV_CLUSTER_NAME}
+
 k3d: prepare-tools
 	(${SUDO} docker ps | grep k3d-${ENV_CLUSTER_NAME}-server-0 > /dev/null 2>&1) || ${SUDO} k3d cluster create ${ENV_CLUSTER_NAME} --registry-create ${ENV_CLUSTER_NAME}-registry:0.0.0.0:5000 --agents 0
 	k3d kubeconfig merge ${ENV_CLUSTER_NAME}

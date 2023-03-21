@@ -60,6 +60,3 @@ dev: ## Runs the development environment in Kubernetes
 _pytest:
 	pipenv sync
 	pipenv run pytest -s
-
-_kuttl:
-	kuttl test

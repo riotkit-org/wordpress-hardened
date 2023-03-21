@@ -12,6 +12,7 @@ run:
 	docker run --rm --name wp-riotkit -p 8090:8080 ${IMAGE}
 
 integration-test:
+	k3d kubeconfig merge ${ENV_CLUSTER_NAME}
 	kuttl test
 
 test: test_installed test_installs_plugins

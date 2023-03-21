@@ -1,0 +1,69 @@
+---
+apiVersion: skaffold/v3
+kind: Config
+profiles:
+    - name: app
+      build:
+          local:
+              push: true
+          artifacts:
+              - image: rkt-registry:5000/backup-repository
+                ko:
+                    dependencies:
+                        paths: ["**/*.go", "go.mod", "go.sum"]
+                        ignore: ["**/*_test.go"]
+          tagPolicy:
+              gitCommit: {}
+          insecureRegistries:
+              - rkt-registry:5000
+      deploy:
+          statusCheck: true
+          statusCheckDeadlineSeconds: 120
+          helm:
+              releases:
+#                  - name: server
+#                    chartPath: helm/backup-repository-server
+#                    recreatePods: true
+#                    namespace: backups
+#                    createNamespace: true
+#                    valuesFiles:
+#                        - helm/examples/backup-repository-ci.values.yaml
+#                    setValueTemplates:
+#                        installCRD: "false"
+#                        image.repository: 'bmt-registry:5000/backup-repository'
+#                        image.tag: '{{.IMAGE_TAG}}'
+#                        terminationGracePeriodSeconds: 1
+#                        env.GIN_MODE: "debug"
+      portForward:
+#          - resourceType: service
+#            resourceName: server-backup-repository-server
+#            namespace: backups
+#            port: 8080
+#            localPort: 8050
+
+
+    - name: deps
+      deploy:
+          statusCheck: true
+          statusCheckDeadlineSeconds: 120
+          helm:
+              releases:
+#                  - name: postgresql
+#                    repo: https://charts.bitnami.com/bitnami
+#                    version: 12.1.2
+#                    remoteChart: postgresql
+#                    namespace: db
+#                    createNamespace: true
+#                    wait: true
+#                    valuesFiles:
+#                        - helm/examples/postgresql.values.yaml
+#
+#                  - name: minio
+#                    repo: https://charts.min.io/
+#                    version: 5.0.1
+#                    remoteChart: minio
+#                    namespace: storage
+#                    createNamespace: true
+#                    wait: true
+#                    valuesFiles:
+#                        - helm/examples/minio.values.yaml

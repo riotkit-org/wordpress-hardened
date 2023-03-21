@@ -15,7 +15,7 @@ ENV_PORT_FORWARD ?= "8050:8080"
 
 .EXPORT_ALL_VARIABLES:
 PATH = $(shell pwd)/.build:$(shell echo $$PATH)
-KUBECONFIG = $(shell /bin/bash -c 'rm $$HOME/.k3d/kubeconfig-${ENV_CLUSTER_NAME}.yaml -f; k3d kubeconfig merge ${ENV_CLUSTER_NAME} > /dev/null 2>&1 || true; echo "$$HOME/.k3d/kubeconfig-${ENV_CLUSTER_NAME}.yaml"')
+KUBECONFIG = $(shell /bin/bash -c 'k3d kubeconfig merge ${ENV_CLUSTER_NAME} > /dev/null 2>&1 || true; echo "$$HOME/.k3d/kubeconfig-${ENV_CLUSTER_NAME}.yaml"')
 
 .PHONY: kubeconfig
 kubeconfig:

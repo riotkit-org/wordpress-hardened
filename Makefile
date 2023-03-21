@@ -9,7 +9,7 @@ run:
 	docker run --rm --name wp-riotkit -p 8090:8080 ${IMAGE}
 
 integration-test: prepare-tools kubeconfig
-	kuttl test
+	kuttl test --report xml
 
 test: test_installed test_installs_plugins
 

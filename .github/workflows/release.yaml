@@ -25,3 +25,5 @@ jobs:
         with:
             osVariant: ubuntu-22.04
             pythonEnabled: true
+            testReportEnabled: true
+            testReportPattern: kuttl-report.xml

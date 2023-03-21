@@ -1,2 +1,3 @@
 /.build/*
 /kubeconfig
+/kuttl-report.xml

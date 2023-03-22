@@ -170,6 +170,57 @@ Success: Installed 1 of 1 plugins.
 - If at least one plugin installation will fail, then **after exceeding maximum number of retries the container will exit**
 - Even if some plugins installation will fail, the rest will be installed (installation process does not exit immediately after first fail)
 
+
+Access log and error log
+------------------------
+
+Point access and error logs to files, to stdout/stderr or disable logging by using environment variables.
+
+```bash
+ACCESS_LOG: /dev/stdout
+ERROR_LOG: /dev/stderr
+```
+
+```bash
+ACCESS_LOG: /mnt/logs/access.log
+ERROR_LOG: /mnt/logs/error.log
+```
+
+```bash
+ACCESS_LOG: off
+ERROR_LOG: off
+```
+
+Using proxy to connect to the internet (egress traffic, http proxy)
+-------------------------------------------------------------------
+
+In restricted environments you may want to deny all egress traffic from your WordPress instance, but let the WordPress
+update itself and install/upgrade plugins using a HTTP proxy, where you are in control of allowed internet destinations.
+
+```yaml
+env:
+    WP_PROXY_HOST: my-proxy.proxy.svc.cluster.local
+    WP_PROXY_PORT: 8080
+    WP_PROXY_USERNAME: user
+    WP_PROXY_PASSWORD: xxxxx
+    WP_PROXY_BYPASS_HOSTS: localhost
+```
+
+## Kubernetes
+
+`wordpress-hardened` provides both container image and **Helm Chart**.
+
+Helm Chart can be installed from an OCI repository [ghcr.io/riotkit-org/charts/wordpress-hardened - check all available versions there](helm pull  oci://ghcr.io/riotkit-org/charts/wordpress-hardened --version 0.0-latest-master)
+
+```bash
+# change version to non-latest :-)
+helm pull oci://ghcr.io/riotkit-org/charts/wordpress-hardened --version 0.0-latest-master
+helm install myrelease oci://ghcr.io/riotkit-org/charts/wordpress-hardened --version 0.0-latest-master
+```
+
+[Check Helm values there](./helm/wordpress-hardened)
+-----------------------
+
 Keeping wp-content and themes in GIT repository (Kubernetes only)
 -----------------------------------------------------------------
 
@@ -279,29 +330,8 @@ ingresses:
             secretName: my-domain-tls
 ```
 
-
-Access log and error log
-------------------------
-
-Point access and error logs to files, to stdout/stderr or disable logging by using environment variables.
-
-```bash
-ACCESS_LOG: /dev/stdout
-ERROR_LOG: /dev/stderr
-```
-
-```bash
-ACCESS_LOG: /mnt/logs/access.log
-ERROR_LOG: /mnt/logs/error.log
-```
-
-```bash
-ACCESS_LOG: off
-ERROR_LOG: off
-```
-
-Mounting extra volumes
-----------------------
+Mounting extra volumes (Kubernetes only)
+----------------------------------------
 
 Every file placed in `/mnt/extra-files` will be copied during startup to `/var/www/riotkit/`, this mechanism ensures that
 no any file will be created with root-permissions inside a `/var/www/riotkit` directory - mounting a volume directly could do so.
@@ -328,21 +358,6 @@ pv:
         - name: my-config
           mountPath: /mnt/extra-files/wp-content/some-file.php
           subPath: some-file.php
-```
-
-Using proxy to connect to the internet (egress traffic, http proxy)
--------------------------------------------------------------------
-
-In restricted environments you may want to deny all egress traffic from your WordPress instance, but let the WordPress
-update itself and install/upgrade plugins using a HTTP proxy, where you are in control of allowed internet destinations.
-
-```yaml
-env:
-    WP_PROXY_HOST: my-proxy.proxy.svc.cluster.local
-    WP_PROXY_PORT: 8080
-    WP_PROXY_USERNAME: user
-    WP_PROXY_PASSWORD: xxxxx
-    WP_PROXY_BYPASS_HOSTS: localhost
 ```
 
 From authors

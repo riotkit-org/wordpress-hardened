@@ -28,3 +28,4 @@ jobs:
             chartPath: helm/wordpress-hardened
             chartRepoName: "riotkit-org/charts/"
             chartName: wordpress-hardened
+            enableHelmDocs: true

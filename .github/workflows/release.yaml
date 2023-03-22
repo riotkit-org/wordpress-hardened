@@ -17,6 +17,8 @@ jobs:
     container-image:
         uses: riotkit-org/.github/.github/workflows/release.container.yaml@release-1
         needs: ["test"]
+        if: |
+            always() && (needs.test.result == 'success' || needs.test.result == 'skipped')
         with:
             osVariant: ubuntu-22.04
             intermediateArtifactsPath: ""

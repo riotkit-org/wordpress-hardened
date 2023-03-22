@@ -18,7 +18,8 @@ if ([ ! -e index.php ] && [ ! -e wp-includes/version.php ]) || [[ "${FORCE_UPGRA
             args+=( "--exclude" "wp-content" )
         fi
 
-        rsync -av /usr/src/wordpress/* /var/www/riotkit "${args[@]}"
+        echo "Running rsync, additional args: ${args}"
+        rsync -av --no-o --no-g --no-t --no-p /usr/src/wordpress/* /var/www/riotkit "${args[@]}"
         echo >&2 "Complete! WordPress has been successfully copied to $PWD"
 fi
 

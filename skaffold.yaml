@@ -38,9 +38,21 @@ profiles:
                             WP_PREINSTALL: true
                             WORDPRESS_DB_PASSWORD: "lgbt-1312"
 
-                        domain: "localhost"
-                        publicPort: "8050"
+                        # PVC cannot be re-deployed
+                        pv:
+                            wp:
+                                enabled: false
+                                create: false
+                            wp_content:
+                                enabled: false
+                                create: false
+                        chownInitContainer:
+                            enabled: false
 
+                        wordpress:
+                            domain: "localhost"
+                            publicPort: "8050"
+                            https: "off"
                         health:
                             allowedSubnets: 0.0.0.0/0
 

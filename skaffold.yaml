@@ -7,11 +7,9 @@ profiles:
           local:
               push: true
           artifacts:
-              - image: rkt-registry:5000/backup-repository
-                ko:
-                    dependencies:
-                        paths: ["**/*.go", "go.mod", "go.sum"]
-                        ignore: ["**/*_test.go"]
+              - image: rkt-registry:5000/wordpress-hardened
+                docker:
+                    dockerfile: Dockerfile
           tagPolicy:
               gitCommit: {}
           insecureRegistries:
@@ -22,23 +20,23 @@ profiles:
           helm:
               releases:
                   - name: wp
-                    chartPath: helm/backup-repository-server
+                    chartPath: helm/wordpress-hardened
                     recreatePods: true
-                    namespace: backups
+                    namespace: wp
                     createNamespace: true
                     setValueTemplates:
+                        image:
+                            repository: rkt-registry:5000/wordpress-hardened
+                            tag: '{{.IMAGE_TAG}}'
                         db:
                             user: riotkit
                             name: riotkit
                             host: mariadb.db.svc.cluster.local
                             port: 3306
-                            password:
-                                secretName: db-credentials
-                                secretKey: password
-
                         env:
                             HTTPS: off
                             WP_PREINSTALL: true
+                            WORDPRESS_DB_PASSWORD: "lgbt-1312"
 
                         domain: "localhost"
                         publicPort: "8050"
@@ -46,13 +44,11 @@ profiles:
                         health:
                             allowedSubnets: 0.0.0.0/0
 
-
-
       portForward:
           - resourceType: service
-            resourceName: server-backup-repository-server
+            resourceName: wp-wph
             namespace: wp
-            port: 8080
+            port: 80
             localPort: 8050
 
 

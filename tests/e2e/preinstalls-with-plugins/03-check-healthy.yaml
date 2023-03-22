@@ -19,5 +19,4 @@ commands:
             
           # perform HTTP checks
           curl -s ${URL}/readiness.php || (echo "Application is not ready"; kubectl logs deployment/wp-wph -n ${NAMESPACE}; exit 1)
-          curl -L -vvv ${URL}
           killall kubectl 2>/dev/null || true

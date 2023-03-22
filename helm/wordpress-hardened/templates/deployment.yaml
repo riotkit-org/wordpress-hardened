@@ -122,12 +122,17 @@ spec:
 
                       {{- if not (hasKey .Values.env "WP_PAGE_URL") }}
                       - name: WP_PAGE_URL
-                        value: "https://{{ .Values.domain }}{{ if not (eq .Values.publicPort "80") }}:{{ .Values.publicPort }}{{ end }}"
+                        value: "http{{ if eq .Values.wordpress.https "on" }}s{{ end }}://{{ .Values.wordpress.domain }}{{ if not (eq .Values.wordpress.publicPort "443") }}:{{ .Values.wordpress.publicPort }}{{ end }}"
                       {{- end }}
 
                       {{- if not (hasKey .Values.env "HEALTH_CHECK_ALLOWED_SUBNET") }}
                       - name: HEALTH_CHECK_ALLOWED_SUBNET
                         value: {{ .Values.health.allowedSubnets | quote }}
+                      {{- end }}
+
+                      {{- if not (hasKey .Values.env "HTTPS") }}
+                      - name: HTTPS
+                        value: {{ .Values.wordpress.https | quote }}
                       {{- end }}
 
                       - name: WORDPRESS_DB_NAME

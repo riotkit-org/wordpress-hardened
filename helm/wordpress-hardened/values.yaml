@@ -5,8 +5,6 @@ image:
 terminationGracePeriodSeconds: 20
 revisionHistoryLimit: 1
 podLabels: {}
-domain: example.org
-publicPort: "80"
 
 podSecurityContext:
     runAsUser: 65161
@@ -38,6 +36,15 @@ db:
 wordpress:
     # -- Should the WordPress automatically update itself periodically? NOTICE! Use with .pv.wp.enabled = true
     autoUpdate: true
+
+    # -- Ingress domain name
+    domain: example.org
+
+    # -- Ingress port
+    publicPort: "443"
+
+    # -- HTTP/HTTPS
+    https: "on"
 
 pv:
     # -- Disable whole root directory volume to have WordPress version managed by the container. Enable it to use updater from the web - in this case the image version would only matter for PHP, NGINX versions, but the WordPress version would be bumped by WordPress by his own
@@ -73,8 +80,7 @@ ingresses:
           - hosts: []
 
 # environment variables passed to the container - see Dockerfile and https://github.com/riotkit-org/wordpress-hardened for reference
-env:
-    HTTPS: "on"
+env: {}
 
 # -- Allows to embed `kind: Secret`, `kind: SealedSecret`, `kind: ExternalSecret` or any other secret. Use it for example with Bitnami's Sealed Secret
 secrets:

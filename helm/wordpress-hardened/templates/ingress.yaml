@@ -27,7 +27,7 @@ spec:
       {{- range $ingress.tls }}
         - hosts:
             {{- if or (not (hasKey . "hosts")) (not .hosts) }}
-              - {{ $.Values.domain | quote }}
+              - {{ $.Values.wordpress.domain | quote }}
             {{ else }}
             {{- range .hosts }}
               - {{ . | quote }}
@@ -38,7 +38,7 @@ spec:
   {{- end }}
     rules:
       {{- range $ingress.hosts }}
-        - host: {{ default $.Values.domain .host | quote }}
+        - host: {{ default $.Values.wordpress.domain .host | quote }}
           http:
               paths:
                 {{- range .paths }}

@@ -5,8 +5,17 @@ on:
         inputs: {}
 
 jobs:
+    test:
+        uses: riotkit-org/.github/.github/workflows/test.integration-tests.yaml@release-1
+        with:
+            osVariant: ubuntu-22.04
+            pythonEnabled: true
+            testReportEnabled: true
+            testReportPattern: kuttl-report.xml
+
     container-image:
         uses: riotkit-org/.github/.github/workflows/release.container.yaml@release-1
+        needs: ["test"]
         with:
             osVariant: ubuntu-22.04
             intermediateArtifactsPath: ""
@@ -19,11 +28,3 @@ jobs:
             chartPath: helm/wordpress-hardened
             chartRepoName: "riotkit-org/charts/"
             chartName: wordpress-hardened
-
-    test:
-        uses: riotkit-org/.github/.github/workflows/test.integration-tests.yaml@release-1
-        with:
-            osVariant: ubuntu-22.04
-            pythonEnabled: true
-            testReportEnabled: true
-            testReportPattern: kuttl-report.xml

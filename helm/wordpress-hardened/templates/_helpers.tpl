@@ -60,3 +60,20 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{- define "wordpress-hardened.mounts" }}
+{{- if .Values.pv.wp.enabled }}
+- name: wp
+  mountPath: /var/www/riotkit
+{{- end }}
+
+{{- if .Values.pv.wp_content.enabled }}
+- name: wp-content
+  mountPath: /var/www/riotkit/wp-content
+{{- end }}
+
+{{- with .Values.pv.extraVolumeMounts }}
+{{- toYaml . }}
+{{- end }}
+
+{{- end }}

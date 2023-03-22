@@ -6,10 +6,11 @@ terminationGracePeriodSeconds: 20
 revisionHistoryLimit: 1
 podLabels: {}
 
-podSecurityContext:
-    runAsUser: 65161
-    runAsGroup: 65161
-    fsGroup: 65161
+# -- If .Values.podSecurityContext is not specified, then this section will set securityContext. Those values also applies to the chown init container
+permissions:
+    uid: 65161
+    gid: 65161
+podSecurityContext: {}
 podDisruptionBudget:
     enabled: false
     spec:
@@ -223,3 +224,8 @@ volumeSyncing:
     automaticEncryption:
         enabled: true
         secretName: sync-encryption
+
+# -- Use PRIVILEGED init container to correct permissions of your volumes
+chownInitContainer:
+    enabled: true
+    image: busybox:1.36.0-musl

@@ -39,10 +39,14 @@ spec:
         spec:
             automountServiceAccountToken: false
             terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds | default "5" }}
-            {{- with .Values.podSecurityContext }}
             securityContext:
-              {{- toYaml . | nindent 14 }}
-            {{- end }}
+                {{- if .Values.podSecurityContext }}
+                {{- toYaml . | nindent 16 }}
+                {{ else }}
+                runAsUser: {{ .Values.permissions.uid }}
+                runAsGroup: {{ .Values.permissions.uid }}
+                fsGroup: {{ .Values.permissions.gid }}
+                {{- end }}
             {{- with .Values.nodeSelector }}
             nodeSelector:
                 {{- toYaml . | nindent 14 }}
@@ -55,6 +59,18 @@ spec:
             tolerations:
                 {{- toYaml . | nindent 14 }}
             {{- end }}
+            initContainers:
+            {{ if .Values.chownInitContainer.enabled }}
+                - name: set-volume-permissions
+                  image: {{ .Values.chownInitContainer.image }}
+                  command: ['sh', '-c', 'chown {{ .Values.permissions.uid }}:{{ .Values.permissions.gid }} /var/www/riotkit']
+                  securityContext:
+                      runAsNonRoot: false
+                      runAsUser: 0
+                      runAsGroup: 0
+                  volumeMounts:
+                      {{ include "wordpress-hardened.mounts" . | nindent 22  }}
+            {{ end }}
             containers:
                 {{- if .Values.waf.enabled }}
                 - name: waf-proxy
@@ -143,11 +159,14 @@ spec:
                         value: {{ .Values.db.port | quote }}
                       - name: WORDPRESS_DB_HOST
                         value: {{ .Values.db.host | quote }}
+
+                      {{- if not (hasKey .Values.env "WORDPRESS_DB_PASSWORD") }}
                       - name: WORDPRESS_DB_PASSWORD
                         valueFrom:
                             secretKeyRef:
                                 name: {{ .Values.db.password.secretName | quote }}
                                 key: {{ .Values.db.password.secretKey | quote }}
+                      {{- end }}
 
                   {{ if .Values.secrets.enabled }}
                   envFrom:
@@ -159,17 +178,7 @@ spec:
                       allowPrivilegeEscalation: false
                       runAsNonRoot: true
                   volumeMounts:
-                      {{- if .Values.pv.wp.enabled }}
-                      - name: wp
-                        mountPath: /var/www/riotkit
-                      {{- end }}
-                      {{- if .Values.pv.wp_content.enabled }}
-                      - name: wp-content
-                        mountPath: /var/www/riotkit/wp-content
-                      {{- end }}
-                      {{- with .Values.pv.extraVolumeMounts }}
-                      {{- toYaml . | nindent 22 }}
-                      {{- end }}
+                      {{ include "wordpress-hardened.mounts" . | nindent 22  }}
                   ports:
                       - name: http
                         containerPort: 8080

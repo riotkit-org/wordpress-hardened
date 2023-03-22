@@ -1,0 +1,18 @@
+{{ range $jobName, $job := .Values.db.administrativeJobs }}
+{{ if not $job.isHelmHook }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+    name: {{ $jobName }}
+    labels:
+        {{- include "wordpress-hardened.labels" $ | nindent 8 }}
+spec:
+    suspend: false
+    schedule: "{{ $job.schedule }}"
+    jobTemplate:
+        spec:
+            {{ $context := dict "Values" $.Values "Release" $.Release "Chart" $.Chart "job" $job "jobName" $jobName }}
+            {{ include "wordpress-hardened.job" $context | nindent 12 }}
+{{ end }}
+{{ end }}

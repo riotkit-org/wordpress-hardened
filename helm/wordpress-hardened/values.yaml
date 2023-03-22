@@ -34,6 +34,15 @@ db:
         secretName: db-credentials
         secretKey: password
 
+    administrativeJobs: {}
+#        delete-old-comments:
+#            image: bitnami/mariadb:10.6
+#            isHelmHook: false
+#            schedule: "16 1 * * *"
+#            # language=mysql
+#            sql: |
+#                DELETE FROM x WHERE y;
+
 wordpress:
     # -- Should the WordPress automatically update itself periodically? NOTICE! Use with .pv.wp.enabled = true
     autoUpdate: true

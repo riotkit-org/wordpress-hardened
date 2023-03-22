@@ -13,7 +13,7 @@ Hardened version of official WordPress container, with special support for Kuber
 - Free from Supervisord, using lightweight [multirun](https://github.com/nicolas-van/multirun) instead
 - Runtime NGINX and PHP configuration to adjust things like `memory_limit`, `error_reporting` or `post_max_size`
 - Pre-configuration of admin account, website name and list of installed plugins
-- Possible to upgrade Wordpress together with docker container
+- Possible to upgrade WordPress together with docker container
 - Built-in primitive rules to block common exploits targeting PHP
 
 **Kubernetes-only features:**
@@ -21,6 +21,7 @@ Hardened version of official WordPress container, with special support for Kuber
 - Integration with [Backup Repository](https://github.com/riotkit-org/backup-repository) (for Kubernetes-native backups)
 - Integration with [Volume Syncing Controller](https://github.com/riotkit-org/volume-syncing-controller) (for WordPress volume synchronization between Pod and cloud filesystem)
 - Web Application Firewall and OWASP CRS support (experimental)
+- Schedule SQL query execution periodically to perform tasks like deletion of old, unapproved comments
 
 Roadmap
 -------
@@ -359,6 +360,35 @@ pv:
           mountPath: /mnt/extra-files/wp-content/some-file.php
           subPath: some-file.php
 ```
+
+Database management Jobs and CronJobs (Kubernetes only)
+-------------------------------------------------------
+
+To clean up the database out of rubbish there is a possibility to define SQL commands that would be executed right after deployment, or periodically.
+
+```yaml
+# (...)
+db:
+    # (...)
+    administrativeJobs:
+        # This Job executes right after deployment - install/upgrade
+        test-1:
+            image: bitnami/mariadb:10.6
+            isHelmHook: true
+            # language=mysql
+            sql: |
+                SHOW TABLES;
+
+        # CronJob
+        delete-old-unapproved-comments:
+            image: bitnami/mariadb:10.6
+            isHelmHook: false
+            schedule: "*/30 * * * *"
+            # language=mysql
+            sql: |
+                DELETE FROM wp_comments WHERE comment_approved = 0 AND DATEDIFF(NOW(), comment_date) > 7;
+```
+
 
 From authors
 ------------

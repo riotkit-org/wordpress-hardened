@@ -1,0 +1,37 @@
+db:
+    user: riotkit
+    name: riotkit
+    host: mariadb.db.svc.cluster.local
+    port: 3306
+    administrativeJobs:
+        test-1:
+            image: bitnami/mariadb:10.6
+            isHelmHook: false
+            schedule: "*/5 * * * *"
+            # language=mysql
+            sql: |
+                SHOW TABLES;
+                DELETE FROM wp_comments WHERE comment_approved = 0 AND DATEDIFF(NOW(), comment_date) > 7;
+
+env:
+    HTTPS: off
+    WP_PREINSTALL: true
+    WORDPRESS_DB_PASSWORD: "lgbt-1312"
+
+# PVC cannot be re-deployed
+pv:
+    wp:
+        enabled: false
+        create: false
+    wp_content:
+        enabled: false
+        create: false
+chownInitContainer:
+    enabled: false
+
+wordpress:
+    domain: "localhost"
+    publicPort: "8050"
+    https: "off"
+health:
+    allowedSubnets: 0.0.0.0/0

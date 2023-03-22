@@ -61,7 +61,7 @@ skaffold-deploy-app: prepare-tools  ## Deploy app
 
 dev: ## Runs the development environment in Kubernetes
 	if [[ "${ENV_SKAFFOLD_DEV_DEPLOY_DEPS}" == "true" ]]; then skaffold deploy -p deps; fi
-	skaffold dev -p app --tag e2e --assume-yes=true --default-repo ${ENV_CLUSTER_NAME}-registry:5000 --force=true
+	skaffold dev -p app --tag e2e --assume-yes=true --default-repo ${ENV_CLUSTER_NAME}-registry:5000
 
 
 ## Frameworks support

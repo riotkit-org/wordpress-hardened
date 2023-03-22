@@ -24,37 +24,12 @@ profiles:
                     recreatePods: true
                     namespace: wp
                     createNamespace: true
+                    valuesFiles:
+                        - skaffold.values.yaml
                     setValueTemplates:
                         image:
                             repository: rkt-registry:5000/wordpress-hardened
                             tag: '{{.IMAGE_TAG}}'
-                        db:
-                            user: riotkit
-                            name: riotkit
-                            host: mariadb.db.svc.cluster.local
-                            port: 3306
-                        env:
-                            HTTPS: off
-                            WP_PREINSTALL: true
-                            WORDPRESS_DB_PASSWORD: "lgbt-1312"
-
-                        # PVC cannot be re-deployed
-                        pv:
-                            wp:
-                                enabled: false
-                                create: false
-                            wp_content:
-                                enabled: false
-                                create: false
-                        chownInitContainer:
-                            enabled: false
-
-                        wordpress:
-                            domain: "localhost"
-                            publicPort: "8050"
-                            https: "off"
-                        health:
-                            allowedSubnets: 0.0.0.0/0
 
       portForward:
           - resourceType: service

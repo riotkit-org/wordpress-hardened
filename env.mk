@@ -1,3 +1,9 @@
+# ===============================================================================
+# Managed by Riotkit Standard One - a set of Open Source Github Actions Workflows
+#
+# NOTICE: ANY CHANGE made to this file would be overwritten by the Pipeline
+# ===============================================================================
+
 SUDO=
 SHELL := /bin/bash
 

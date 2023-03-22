@@ -42,14 +42,16 @@ prepare-tools:  ## Installs required tools
 	# kuttl
 	@test -f ./.build/kuttl || (curl -sL https://github.com/kudobuilder/kuttl/releases/download/v0.15.0/kubectl-kuttl_0.15.0_linux_x86_64 --output ./.build/kuttl && chmod +x ./.build/kuttl)
 
-skaffold-deploy: prepare-tools  ## Deploys app with dependencies using Skaffold
-	k3d kubeconfig merge ${ENV_CLUSTER_NAME}
-	if [[ "${ENV_SKAFFOLD_DEPLOY_DEPS}" == "true" ]]; then skaffold deploy -p deps; fi
-	if [[ "${ENV_SKAFFOLD_DEPLOY_APP}" == "true" ]]; then \
-		skaffold build -p app --tag e2e --default-repo ${ENV_CLUSTER_NAME}-registry:5000 --push --insecure-registry ${ENV_CLUSTER_NAME}-registry:5000 --disable-multi-platform-build=true --detect-minikube=false --cache-artifacts=false; \
-		skaffold deploy -p app --tag e2e --assume-yes=true --default-repo ${ENV_CLUSTER_NAME}-registry:5000; \
-	fi
+skaffold-deploy: skaffold-deploy-deps skaffold-deploy-app  ## Deploys app with dependencies using Skaffold
 	kubectl port-forward svc/${ENV_APP_SVC} -n ${ENV_NS} ${ENV_PORT_FORWARD} &
+
+skaffold-deploy-deps: prepare-tools  ## Deploy app dependencies
+	k3d kubeconfig merge ${ENV_CLUSTER_NAME}
+	skaffold deploy -p deps
+
+skaffold-deploy-app: prepare-tools  ## Deploy app
+	skaffold build -p app --tag e2e --default-repo ${ENV_CLUSTER_NAME}-registry:5000 --push --insecure-registry ${ENV_CLUSTER_NAME}-registry:5000 --disable-multi-platform-build=true --detect-minikube=false --cache-artifacts=false; \
+	skaffold deploy -p app --tag e2e --assume-yes=true --default-repo ${ENV_CLUSTER_NAME}-registry:5000;
 
 dev: ## Runs the development environment in Kubernetes
 	if [[ "${ENV_SKAFFOLD_DEPLOY_DEPS}" == "true" ]]; then skaffold deploy -p deps; fi

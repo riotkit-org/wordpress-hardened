@@ -1,0 +1,23 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestStep
+commands:
+    # Assert Pod is running and healthy
+    # language=bash
+    - script: |
+          #!/bin/bash
+          set -ex
+          kubectl wait --timeout=30s --for=condition=ready pod -l app.kubernetes.io/instance=wp -n ${NAMESPACE} || (echo "Application is not ready"; kubectl logs deployment/wp-wph -n ${NAMESPACE}; exit 1)
+
+    # Check endpoints
+    # language=bash
+    - script: |
+          #!/bin/bash
+          set -ex
+          killall kubectl 2>/dev/null || true; kubectl port-forward deployment/wp-wph -n ${NAMESPACE} 8050:8080 & 
+          sleep 2
+          URL=http://127.0.0.1:8050
+            
+          # perform HTTP checks
+          curl -s ${URL}/readiness.php || (echo "Application is not ready"; kubectl logs deployment/wp-wph -n ${NAMESPACE}; exit 1)
+          curl -L -vvv ${URL}
+          killall kubectl 2>/dev/null || true

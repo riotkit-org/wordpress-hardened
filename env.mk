@@ -49,7 +49,6 @@ skaffold-deploy: prepare-tools  ## Deploys app with dependencies using Skaffold
 		skaffold build -p app --tag e2e --default-repo ${ENV_CLUSTER_NAME}-registry:5000 --push --insecure-registry ${ENV_CLUSTER_NAME}-registry:5000 --disable-multi-platform-build=true --detect-minikube=false --cache-artifacts=false; \
 		skaffold deploy -p app --tag e2e --assume-yes=true --default-repo ${ENV_CLUSTER_NAME}-registry:5000; \
 	fi
-	kubectl port-forward svc/${ENV_APP_SVC} -n ${ENV_NS} ${ENV_PORT_FORWARD} &
 
 dev: ## Runs the development environment in Kubernetes
 	if [[ "${ENV_SKAFFOLD_DEPLOY_DEPS}" == "true" ]]; then skaffold deploy -p deps; fi

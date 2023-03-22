@@ -6,6 +6,7 @@ terminationGracePeriodSeconds: 20
 revisionHistoryLimit: 1
 podLabels: {}
 domain: example.org
+publicPort: "80"
 
 podSecurityContext:
     runAsUser: 65161
@@ -26,8 +27,8 @@ rollingUpdate:
 extraConfigMaps: []
 
 db:
-    user: wordpress
-    name: wordpress
+    user: riotkit
+    name: riotkit
     host: mariadb.db.svc.cluster.local
     port: 3306
     password:

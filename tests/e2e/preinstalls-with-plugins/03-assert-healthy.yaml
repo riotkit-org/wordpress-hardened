@@ -1,5 +1,0 @@
----
-apiVersion: kuttl.dev/v1beta1
-kind: TestStep
-commands:
-    - command: "curl 127.0.0.1:8050 -vvv"

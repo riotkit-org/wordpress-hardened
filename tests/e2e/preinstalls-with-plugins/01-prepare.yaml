@@ -2,4 +2,5 @@
 apiVersion: kuttl.dev/v1beta1
 kind: TestStep
 commands:
+    - command: kubectl create secret generic db-credentials --from-literal=password=lgbt-1312 -n ${NAMESPACE}
     - command: helm upgrade --install wp ../../../helm/wordpress-hardened --values ./values.yaml -n ${NAMESPACE}

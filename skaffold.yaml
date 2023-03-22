@@ -27,6 +27,24 @@ profiles:
                     namespace: backups
                     createNamespace: true
                     setValueTemplates:
+                        db:
+                            user: riotkit
+                            name: riotkit
+                            host: mariadb.db.svc.cluster.local
+                            port: 3306
+                            password:
+                                secretName: db-credentials
+                                secretKey: password
+
+                        env:
+                            HTTPS: off
+                            WP_PREINSTALL: true
+
+                        domain: "localhost"
+                        publicPort: "8050"
+
+                        health:
+                            allowedSubnets: 0.0.0.0/0
 
 
 

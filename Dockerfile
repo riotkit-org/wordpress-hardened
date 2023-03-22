@@ -47,7 +47,7 @@ RUN apk --update add nginx apache2-utils rsync less \
     && chown www-data:www-data /var/tmp/nginx/ /var/lib/nginx/tmp/ -R \
     && chmod +x /usr/bin/wp
 
-ADD ./wp-config-sample.php /usr/src/wordpress/wp-config-sample.php
+ADD ./wp-config-sample.php /usr/src/wordpress/wp-config.php
 ADD ./wp-config-riotkit.php /usr/src/wordpress/wp-config-riotkit.php
 ADD ./liveness.php /usr/src/wordpress/liveness.php
 ADD ./readiness.php /usr/src/wordpress/readiness.php

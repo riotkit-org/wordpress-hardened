@@ -59,6 +59,10 @@ spec:
             tolerations:
                 {{- toYaml . | nindent 14 }}
             {{- end }}
+
+            # ================================================================
+            #  Init Container for fixing permissions
+            # ================================================================
             initContainers:
             {{ if .Values.chownInitContainer.enabled }}
                 - name: set-volume-permissions
@@ -72,6 +76,9 @@ spec:
                       {{ include "wordpress-hardened.mounts" . | nindent 22  }}
             {{ end }}
             containers:
+                # ================================================================
+                #  Web Application Firewall (WAF) support
+                # ================================================================
                 {{- if .Values.waf.enabled }}
                 - name: waf-proxy
                   image: {{ .Values.waf.image.repository }}:{{ .Values.waf.image.tag }}
@@ -125,6 +132,9 @@ spec:
                   {{- end }}
                 {{- end }}
 
+                # ================================================================
+                #  WordPress container
+                # ================================================================
                 - name: app
                   image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
                   imagePullPolicy: Always
@@ -138,7 +148,7 @@ spec:
 
                       {{- if not (hasKey .Values.env "WP_PAGE_URL") }}
                       - name: WP_PAGE_URL
-                        value: "http{{ if eq .Values.wordpress.https "on" }}s{{ end }}://{{ .Values.wordpress.domain }}{{ if not (eq .Values.wordpress.publicPort "443") }}:{{ .Values.wordpress.publicPort }}{{ end }}"
+                        value: "http{{ if eq .Values.wordpress.https "on" }}s{{ end }}://{{ .Values.wordpress.domain }}{{ if not (eq (.Values.wordpress.publicPort | toString) "443") }}:{{ .Values.wordpress.publicPort }}{{ end }}"
                       {{- end }}
 
                       {{- if not (hasKey .Values.env "HEALTH_CHECK_ALLOWED_SUBNET") }}

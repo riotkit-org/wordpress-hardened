@@ -1,0 +1,11 @@
+/skaffold.yaml
+/.env
+/.gitignore
+/Makefile
+/kuttl-report.xml
+/kuttl-test.yaml
+/kubeconfig
+/tests
+/helm
+/.github
+/.build

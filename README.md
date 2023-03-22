@@ -210,7 +210,7 @@ env:
 
 `wordpress-hardened` provides both container image and **Helm Chart**.
 
-Helm Chart can be installed from an OCI repository [ghcr.io/riotkit-org/charts/wordpress-hardened - check all available versions there](helm pull  oci://ghcr.io/riotkit-org/charts/wordpress-hardened --version 0.0-latest-master)
+Helm Chart can be installed from an OCI repository [ghcr.io/riotkit-org/charts/wordpress-hardened - check all available versions there](https://ghcr.io/riotkit-org/charts/wordpress-hardened)
 
 ```bash
 # change version to non-latest :-)

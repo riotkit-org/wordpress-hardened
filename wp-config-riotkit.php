@@ -17,6 +17,10 @@ function get_virtual_host($hosts) {
 }
 
 function get_preferred_protocol ($url) {
+    if (stripos($url, "://") !== false) {
+        return "";
+    }
+
     return str_ends_with($url, '.localhost') ? 'http://' : 'https://';
 }
 

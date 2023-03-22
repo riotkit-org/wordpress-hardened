@@ -40,6 +40,7 @@ Hardened version of official WordPress container, with special support for Kuber
 | backups.templateType | string | `"internal"` |  |
 | backups.url | string | `"https://my-backup-repository-instance.org"` | Backup Repository instance URL |
 | chownInitContainer | object | `{"enabled":true,"image":"busybox:1.36.0-musl"}` | Use PRIVILEGED init container to correct permissions of your volumes |
+| db.administrativeJobs | object | `{}` |  |
 | db.host | string | `"mariadb.db.svc.cluster.local"` |  |
 | db.name | string | `"riotkit"` |  |
 | db.password.secretKey | string | `"password"` |  |

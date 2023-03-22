@@ -18,7 +18,7 @@ jobs:
         uses: riotkit-org/.github/.github/workflows/release.container.yaml@release-1
         needs: ["test"]
         if: |
-            always() && (needs.test.result == 'success' || needs.test.result == 'skipped')
+            always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
         with:
             osVariant: ubuntu-22.04
             intermediateArtifactsPath: ""
@@ -27,6 +27,8 @@ jobs:
     helm:
         uses: riotkit-org/.github/.github/workflows/release.helm.yaml@release-1
         needs: ["container-image"]
+        if: |
+            always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
         with:
             chartPath: helm/wordpress-hardened
             chartRepoName: "riotkit-org/charts/"

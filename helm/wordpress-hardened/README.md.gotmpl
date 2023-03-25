@@ -1,9 +1,13 @@
 {{ template "chart.header" . }}
 {{ template "chart.deprecationWarning" . }}
 
-{{ template "chart.badgesSection" . }}
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/wordpress-hardened)](https://artifacthub.io/packages/search?repo=wordpress-hardened)
 
 Hardened version of official WordPress container, with special support for Kubernetes.
+
+```bash
+helm install my-wordpress-hardened oci://ghcr.io/riotkit-org/charts/wordpress-hardened --version {{ .chart.appVersion }}
+```
 
 **Features:**
 - Scheduled updates via wp-cli
@@ -23,6 +27,7 @@ Hardened version of official WordPress container, with special support for Kuber
 - Integration with [Backup Repository](https://github.com/riotkit-org/backup-repository) (for Kubernetes-native backups)
 - Integration with [Volume Syncing Controller](https://github.com/riotkit-org/volume-syncing-controller) (for WordPress volume synchronization between Pod and cloud filesystem)
 - Web Application Firewall and OWASP CRS support (experimental)
+
 
 [Check full documentation](https://github.com/riotkit-org/wordpress-hardened)
 ------------------------

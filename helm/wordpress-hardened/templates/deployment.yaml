@@ -63,8 +63,8 @@ spec:
             # ================================================================
             #  Init Container for fixing permissions
             # ================================================================
-            initContainers:
             {{ if .Values.chownInitContainer.enabled }}
+            initContainers:
                 - name: set-volume-permissions
                   image: {{ .Values.chownInitContainer.image }}
                   command: ['sh', '-c', 'chown {{ .Values.permissions.uid }}:{{ .Values.permissions.gid }} /var/www/riotkit']

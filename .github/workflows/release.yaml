@@ -31,6 +31,5 @@ jobs:
             always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
         with:
             chartPath: helm/wordpress-hardened
-            chartRepoName: "riotkit-org/charts/"
             chartName: wordpress-hardened
             enableHelmDocs: true

@@ -136,7 +136,7 @@ spec:
                 #  WordPress container
                 # ================================================================
                 - name: app
-                  image: {{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}
+                  image: {{ .Values.image.repository }}:{{ default .Values.riotkit.release.ref .Values.image.tag }}
                   imagePullPolicy: Always
                   env:
                       {{- with .Values.env }}

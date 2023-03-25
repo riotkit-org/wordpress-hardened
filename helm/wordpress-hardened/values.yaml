@@ -238,3 +238,9 @@ volumeSyncing:
 chownInitContainer:
     enabled: true
     image: busybox:1.36.0-musl
+
+riotkit:
+    # -- filled up by CI/CD pipeline during the release
+    release:
+        ref: "master"
+        isSnapshot: false

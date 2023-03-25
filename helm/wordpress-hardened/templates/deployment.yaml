@@ -67,7 +67,7 @@ spec:
             initContainers:
                 - name: set-volume-permissions
                   image: {{ .Values.chownInitContainer.image }}
-                  command: ['sh', '-c', 'chown {{ .Values.permissions.uid }}:{{ .Values.permissions.gid }} /var/www/riotkit']
+                  command: ['sh', '-c', 'chown {{ .Values.permissions.uid }}:{{ .Values.permissions.gid }} /var/www/riotkit /var/www/riotkit/wp-content']
                   securityContext:
                       runAsNonRoot: false
                       runAsUser: 0

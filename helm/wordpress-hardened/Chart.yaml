@@ -3,4 +3,4 @@ name: wordpress-hardened
 description: "Lightweight Wordpress installation with additional security fixes"
 type: application
 version: 0.0.1-latest-master
-appVersion: master # replaced by CI on build stage
+appVersion: master} # replaced by CI on build stage
